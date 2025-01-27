@@ -15,18 +15,24 @@ class ReportController extends Controller
         return response()->json($reports, 200);
     }
 
+    public function todo()
+    {
+        $reports = Report::all();
+        return response()->json($reports, 200);
+    }
+
     // Crear un nuevo reporte
     public function store(Request $request)
     {
         $request->validate([
-            'buildingID' => 'required|string|max:10|exists:buildings,buildingID',
-            'roomID' => 'required|string|max:10|exists:rooms,roomID',
-            'categoryID' => 'required|integer|exists:categories,categoryID',
-            'goodID' => 'required|integer|exists:goods,goodID', 
+            'buildingID' => 'required|string|max:10', //|exists:buildings,buildingID',
+            'roomID' => 'required|string|max:10', //|exists:rooms,roomID',
+            'categoryID' => 'required|integer', //|exists:categories,categoryID',
+            'goodID' => 'required|integer', //|exists:goods,goodID', 
             'priority' => 'required|in:Immediate,Normal',
             'description' => 'required|string',
             'image' => 'nullable|string',
-            'userID' => 'required|integer|exists:users,user_id',
+            'userID' => 'required|integer', //|exists:users,user_id',
             'status' => 'required|in:Pending,In Progress,Completed',
         ]);
 
