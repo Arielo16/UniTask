@@ -32,7 +32,7 @@ class ReportController extends Controller
             'priority' => 'required|in:Immediate,Normal',
             'description' => 'required|string',
             'image' => 'nullable|string',
-            'userID' => 'required|integer', //|exists:users,user_id',
+            'matricula' => 'required|integer', //|exists:users,matricula',
             'status' => 'required|in:Pending,In Progress,Completed',
         ]);
 
@@ -75,7 +75,7 @@ class ReportController extends Controller
             'priority' => 'nullable|in:Immediate,Normal',
             'description' => 'nullable|string',
             'image' => 'nullable|string',
-            'userID' => 'nullable|integer|exists:users,user_id',
+            'matricula' => 'nullable|integer|exists:users,matricula',
             'status' => 'nullable|in:Pending,In Progress,Completed',
         ]);
 

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->string('roomID', 10); // ID del salón
-            $table->string('buildingID', 10); // ID del edificio (FK)
+            $table->string('buildingID', 10); // Asegúrate de que el tamaño sea 10
             $table->unsignedBigInteger('typeID'); // Tipo de salón (FK)
 
             $table->primary(['roomID', 'buildingID']); // Llave compuesta: roomID y buildingID

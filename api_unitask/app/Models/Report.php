@@ -31,7 +31,7 @@ class Report extends Model
         'priority',
         'description',
         'image',
-        'userID',
+        'matricula',
         'status',
     ];
 
@@ -58,6 +58,6 @@ class Report extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID', 'user_id');
+        return $this->belongsTo(User::class, 'matricula', 'matricula');
     }
 }

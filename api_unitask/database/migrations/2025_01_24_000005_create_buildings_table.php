@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('buildings', function (Blueprint $table) {
-            $table->string('buildingID', 1)->primary(); 
+            $table->string('buildingID', 10)->primary(); // Asegúrate de que el tamaño sea 10
             $table->timestamps();
         });
 

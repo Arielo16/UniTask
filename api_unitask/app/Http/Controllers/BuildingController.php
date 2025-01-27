@@ -18,7 +18,7 @@ class BuildingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'buildingID' => 'required|string|max:1|unique:buildings,buildingID',
+            'buildingID' => 'required|string|max:10|unique:buildings,buildingID',
         ]);
 
         $building = Building::create($request->all());
