@@ -4,121 +4,87 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
-    /**
-     * Display a listing of the reports.
-     */
+    // Mostrar todos los reportes
     public function index()
     {
-        $reports = Report::with(['building', 'room', 'category', 'creator'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return response()->json(['data' => $reports], 200);
+        $reports = Report::with(['building', 'room', 'category', 'goods', 'user'])->get();
+        return response()->json($reports, 200);
     }
 
-    /**
-     * Store a newly created report in storage.
-     */
+    // Crear un nuevo reporte
     public function store(Request $request)
     {
-        // Validate incoming request
-        $validated = $request->validate([
-            'building_id' => 'required|string|max:10',
-            'room_id' => 'required|string|max:10',
-            'category_id' => 'required|integer|exists:categories,category_id',
+        $request->validate([
+            'buildingID' => 'required|string|max:10|exists:buildings,buildingID',
+            'roomID' => 'required|string|max:10|exists:rooms,roomID',
+            'categoryID' => 'required|integer|exists:categories,categoryID',
+            'goodID' => 'required|integer|exists:goods,goodID', 
             'priority' => 'required|in:Immediate,Normal',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Optional image upload
+            'image' => 'nullable|string',
+            'userID' => 'required|integer|exists:users,user_id',
+            'status' => 'required|in:Pending,In Progress,Completed',
         ]);
 
-        // Generate unique folio
+        // Generar un folio único si no se proporciona
+        $folio = $request->input('folio') ?? $this->generateUniqueFolio();
+
+        $reportData = $request->all();
+        $reportData['folio'] = $folio;
+
+        $report = Report::create($reportData);
+
+        return response()->json($report, 201);
+    }
+
+    // Método para generar un folio único
+    private function generateUniqueFolio()
+    {
         do {
-            $folio = str_pad(rand(0, 9999999), 7, '0', STR_PAD_LEFT);
+            $folio = 'REP' . Str::upper(Str::random(7));
         } while (Report::where('folio', $folio)->exists());
 
-        // Create the report
-        $report = Report::create([
-            'folio' => $folio,
-            'building_id' => $validated['building_id'],
-            'room_id' => $validated['room_id'],
-            'category_id' => $validated['category_id'],
-            'priority' => $validated['priority'],
-            'description' => $validated['description'],
-            'image' => $request->file('image') ? $request->file('image')->store('reports', 'public') : null,
-            'created_by' => auth()->id(), // Assuming the user is authenticated
-            'status' => 'Pending',
-        ]);
-
-        return response()->json(['message' => 'Report created successfully!', 'data' => $report], 201);
+        return $folio;
     }
 
-    /**
-     * Display the specified report.
-     */
+    // Mostrar un reporte por folio
     public function show($folio)
     {
-        $report = Report::with(['building', 'room', 'category', 'creator'])->where('folio', $folio)->first();
-
-        if (!$report) {
-            return response()->json(['message' => 'Report not found'], 404);
-        }
-
-        return response()->json(['data' => $report], 200);
+        $report = Report::with(['building', 'room', 'category', 'goods', 'user'])->findOrFail($folio);
+        return response()->json($report, 200);
     }
 
-    /**
-     * Update the specified report in storage.
-     */
+    // Actualizar un reporte
     public function update(Request $request, $folio)
     {
-        $report = Report::where('folio', $folio)->first();
-
-        if (!$report) {
-            return response()->json(['message' => 'Report not found'], 404);
-        }
-
-        // Validate incoming request
-        $validated = $request->validate([
-            'building_id' => 'nullable|string|max:10',
-            'room_id' => 'nullable|string|max:10',
-            'category_id' => 'nullable|integer|exists:categories,category_id',
+        $request->validate([
+            'buildingID' => 'nullable|string|max:10|exists:buildings,buildingID',
+            'roomID' => 'nullable|string|max:10|exists:rooms,roomID',
+            'categoryID' => 'nullable|integer|exists:categories,categoryID',
+            'goodID' => 'nullable|integer|exists:goods,goodID', 
             'priority' => 'nullable|in:Immediate,Normal',
             'description' => 'nullable|string',
+            'image' => 'nullable|string',
+            'userID' => 'nullable|integer|exists:users,user_id',
             'status' => 'nullable|in:Pending,In Progress,Completed',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Update report fields
-        $report->update([
-            'building_id' => $validated['building_id'] ?? $report->building_id,
-            'room_id' => $validated['room_id'] ?? $report->room_id,
-            'category_id' => $validated['category_id'] ?? $report->category_id,
-            'priority' => $validated['priority'] ?? $report->priority,
-            'description' => $validated['description'] ?? $report->description,
-            'status' => $validated['status'] ?? $report->status,
-            'image' => $request->file('image') ? $request->file('image')->store('reports', 'public') : $report->image,
-        ]);
+        $report = Report::findOrFail($folio);
+        $report->update($request->all());
 
-        return response()->json(['message' => 'Report updated successfully!', 'data' => $report], 200);
+        return response()->json($report, 200);
     }
 
-    /**
-     * Remove the specified report from storage.
-     */
+    // Eliminar un reporte
     public function destroy($folio)
     {
-        $report = Report::where('folio', $folio)->first();
-
-        if (!$report) {
-            return response()->json(['message' => 'Report not found'], 404);
-        }
-
-        // Delete the report
+        $report = Report::findOrFail($folio);
         $report->delete();
 
-        return response()->json(['message' => 'Report deleted successfully!'], 200);
+        return response()->json(['message' => 'Report deleted successfully'], 200);
     }
 }

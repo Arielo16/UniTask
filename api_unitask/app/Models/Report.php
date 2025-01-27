@@ -9,86 +9,55 @@ class Report extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
+    // Tabla asociada
     protected $table = 'reports';
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
+    // Llave primaria
     protected $primaryKey = 'folio';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
+    // Desactivamos el incremento automático porque usamos un string como llave primaria
     public $incrementing = false;
 
-    /**
-     * The data type of the primary key.
-     *
-     * @var string
-     */
+    // Tipo de la llave primaria
     protected $keyType = 'string';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    // Campos asignables
     protected $fillable = [
         'folio',
-        'building_id',
-        'room_id',
-        'category_id',
+        'buildingID',
+        'roomID',
+        'categoryID',
+        'goodID', 
         'priority',
         'description',
         'image',
-        'created_by',
+        'userID',
         'status',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'priority' => 'string',
-        'status' => 'string',
-    ];
-
-    /**
-     * Relationships.
-     */
-
-    // Building relationship
+    // Relaciones
     public function building()
     {
-        return $this->belongsTo(Building::class, 'building_id', 'building_id');
+        return $this->belongsTo(Building::class, 'buildingID', 'buildingID');
     }
 
-    // Room relationship
     public function room()
     {
-        return $this->belongsTo(Room::class, 'room_id', 'room_id');
+        return $this->belongsTo(Room::class, 'roomID', 'roomID');
     }
 
-    // Category relationship
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+        return $this->belongsTo(Category::class, 'categoryID', 'categoryID');
     }
 
-    // User relationship
-    public function creator()
+    public function goods()
     {
-        return $this->belongsTo(User::class, 'created_by', 'user_id');
+        return $this->belongsTo(Goods::class, 'goodID', 'goodID'); 
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userID', 'user_id');
     }
 }
