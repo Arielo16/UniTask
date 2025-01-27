@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id('goodID');
             $table->string('name'); 
             $table->unsignedBigInteger('categoryID'); 
-            $table->timestamps();
+            $table->timestamps(); 
 
             // Definimos la llave foránea
             $table->foreign('categoryID')->references('categoryID')->on('categories')->onDelete('cascade');
