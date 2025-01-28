@@ -67,6 +67,7 @@ Route::prefix('diagnostics')->group(function () {
 Route::prefix('users')->group(function () {
     Route::get('get/', [UserController::class, 'index']); // Obtener todos los usuarios
     Route::post('post/', [UserController::class, 'store']); // Crear un usuario
+    Route::post('login/', [UserController::class, 'login']); // Autenticar usuario
     Route::get('get/{matricula}', [UserController::class, 'show']); // Obtener un usuario específico
     Route::put('put/{matricula}', [UserController::class, 'update']); // Actualizar un usuario
     Route::delete('delete/{matricula}', [UserController::class, 'destroy']); // Eliminar un usuario
