@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use app\Models\Building;
 
 class ReportController extends Controller
 {
     // Mostrar todos los reportes
-    public function index()
+    public function index(Request $request)
     {
-        $reports = Report::with(['building', 'room', 'category', 'goods', 'user'])->get();
+        $reports = Report::with(['building:id,buildingID,name', 'category:id,categoryID,name'])
+            ->get(['folio', 'buildingID', 'roomID', 'categoryID', 'goodID', 'priority', 'description', 'image', 'matricula', 'status', 'created_at']);
         return response()->json($reports, 200);
     }
 
@@ -25,14 +27,14 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'buildingID' => 'required|string|max:10', //|exists:buildings,buildingID',
-            'roomID' => 'required|string|max:10', //|exists:rooms,roomID',
-            'categoryID' => 'required|integer', //|exists:categories,categoryID',
-            'goodID' => 'required|integer', //|exists:goods,goodID', 
+            'buildingID' => 'required|string|max:10|exists:buildings,buildingID',
+            'roomID' => 'required|string|max:10|exists:rooms,roomID',
+            'categoryID' => 'required|integer|exists:categories,categoryID',
+            'goodID' => 'required|integer|exists:goods,goodID', 
             'priority' => 'required|in:Immediate,Normal',
             'description' => 'required|string',
             'image' => 'nullable|string',
-            'matricula' => 'required|integer', //|exists:users,matricula',
+            'matricula' => 'required|integer|exists:users,matricula',
             'status' => 'required|in:Pending,In Progress,Completed',
         ]);
 

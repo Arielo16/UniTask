@@ -23,21 +23,25 @@ class DiagnosticController extends Controller
 
     // Crear un nuevo diagnóstico
     public function store(Request $request)
-{
-    $request->validate([
-        'folio' => 'required|string|max:10|exists:reports,folio',
-        'description' => 'required|string',
-        'images' => 'nullable|array', // Debe ser un array si se envía
-        'images.*' => 'string', // Cada elemento del array debe ser una cadena (ruta de la imagen)
-        'completed' => 'nullable|boolean',
-    ]);
+    {
+        $request->validate([
+            'folio' => 'required|string|max:10|exists:reports,folio',
+            'description' => 'required|string',
+            'images' => 'nullable|array', // Debe ser un array si se envía
+            'images.*' => 'string', // Cada elemento del array debe ser una cadena (ruta de la imagen)
+            'completed' => 'nullable|boolean',
+        ]);
 
-    $diagnostic = Diagnostic::create($request->all());
+        if ($request->input('completed') == 1) {
+            return response()->json(['message' => 'Cannot create a diagnostic with completed status.'], 400);
+        }
 
-    Report::where('folio', $request->folio)->update(['status' => 'Completed']);
+        $diagnostic = Diagnostic::create($request->all());
 
-    return response()->json($diagnostic, 201);
-}
+        Report::where('folio', $request->folio)->update(['status' => 'Completed']);
+
+        return response()->json($diagnostic, 201);
+    }
 
     // Mostrar un diagnóstico específico
     public function show($id)
