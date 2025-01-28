@@ -14,6 +14,12 @@ class DiagnosticController extends Controller
         return response()->json($diagnostics, 200);
     }
 
+    public function todo()
+    {
+        $diagnostics = Diagnostic::all();
+        return response()->json($diagnostics, 200);
+    }
+
     // Crear un nuevo diagnóstico
     public function store(Request $request)
     {
