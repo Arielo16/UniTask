@@ -24,7 +24,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Reports'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.green[800],
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                futureReports =
+                    ApiService().fetchReports(); // Refresh the reports
+              });
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<Report>>(
         future: futureReports,
@@ -32,27 +44,48 @@ class _HomeScreenState extends State<HomeScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+                child: Text('Error: ${snapshot.error}',
+                    style: TextStyle(color: Colors.red)));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No reports found'));
+            return Center(
+                child: Text('No reports found',
+                    style: TextStyle(fontSize: 18, color: Colors.grey)));
           } else {
             return ListView(
+              padding: EdgeInsets.symmetric(vertical: 10),
               children: snapshot.data!.map((report) {
                 return Card(
-                  elevation: 5,
+                  elevation: 8,
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                   ),
+                  color:
+                      const Color.fromARGB(255, 13, 143, 82), // Fondo del Card
                   child: ListTile(
-                    title: Text('Folio: ${report.folio}'),
-                    subtitle: Text('Building ID: ${report.buildingID}\nRoom ID: ${report.roomID}'),
-                    trailing: Icon(Icons.arrow_forward, color: Colors.green),
+                    contentPadding: EdgeInsets.all(16),
+                    title: Text(
+                      'Folio: ${report.folio}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(
+                              255, 3, 3, 3)), // Color del título
+                    ),
+                    subtitle: Text(
+                      'Building ID: ${report.buildingID}\nRoom ID: ${report.roomID}',
+                      style: TextStyle(
+                          color: const Color.fromARGB(
+                              255, 254, 253, 253)), // Color del subtítulo
+                    ),
+                    trailing: Icon(Icons.arrow_forward,
+                        color: const Color.fromARGB(255, 240, 242, 240)),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ReportDetailScreen(report: report),
+                          builder: (context) =>
+                              ReportDetailScreen(report: report),
                         ),
                       );
                     },

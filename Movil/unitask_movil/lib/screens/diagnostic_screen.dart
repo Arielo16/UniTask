@@ -86,7 +86,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           child: Card(
             elevation: 5,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
               padding: EdgeInsets.all(16.0),
@@ -99,13 +99,26 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                       'Folio: ${widget.report.folio}',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 10),
-                    TextField(
+                    SizedBox(height: 20),
+                    TextFormField(
                       controller: _descriptionController,
                       focusNode: _descriptionFocusNode,
-                      decoration: InputDecoration(labelText: 'Descripción'),
+                      decoration: InputDecoration(
+                        labelText: 'Descripción',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        prefixIcon: Icon(Icons.description),
+                      ),
+                      maxLines: 4,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese una descripción';
+                        }
+                        return null;
+                      },
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 20),
                     CheckboxListTile(
                       title: Text('¿Terminado?'),
                       value: _isCompleted,
@@ -115,13 +128,23 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         });
                       },
                       activeColor: Colors.green,
+                      controlAffinity: ListTileControlAffinity.leading,
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     Center(
                       child: ElevatedButton(
                         onPressed: _submitDiagnosis,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor:
+                              Colors.green, // Aquí se usa backgroundColor
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 12,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         child: Text('Enviar Diagnóstico'),
                       ),
