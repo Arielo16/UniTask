@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('image')->nullable(); 
             $table->string('matricula', 20); // Asegúrate de que el tamaño sea 20
-            $table->enum('status', ['Pending', 'In Progress', 'Completed'])->default('Pending'); 
+            $table->enum('status', ['Pending', 'Diagnostiqued', 'Completed'])->default('Pending'); 
             $table->timestamps(); // Este dato siempre se coloca y es para especificar la fecha de creación y modificación
 
 
@@ -68,7 +68,7 @@ return new class extends Migration
                 'description' => 'Cambio de bombillo en el aula B202',
                 'image' => 'bombillo.jpg',
                 'matricula' => '23090566',
-                'status' => 'In Progress',
+                'status' => 'Diagnostiqued',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -82,7 +82,7 @@ return new class extends Migration
                 'description' => 'Ventana rota en el aula C303',
                 'image' => 'ventana_rota.jpg',
                 'matricula' => '23090565',
-                'status' => 'Pending',
+                'status' => 'Diagnostiqued',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -96,7 +96,7 @@ return new class extends Migration
                 'description' => 'Fuga de agua en el laboratorio E404',
                 'image' => 'fuga_agua.jpg',
                 'matricula' => '23090566',
-                'status' => 'Completed',
+                'status' => 'Diagnostiqued',
                 'created_at' => now(),
                 'updated_at' => now()
             ],

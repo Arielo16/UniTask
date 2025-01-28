@@ -20,6 +20,7 @@ Route::prefix('reports')->group(function () {
     Route::get('get/{folio}', [ReportController::class, 'show']);
     Route::put('put/{folio}', [ReportController::class, 'update']);
     Route::delete('delete/{folio}', [ReportController::class, 'destroy']);
+    Route::get('diagnostiqued', [ReportController::class, 'GetdiagnosticNot']);
 });
 
 Route::prefix('buildings')->group(function () {
@@ -78,3 +79,4 @@ Route::prefix('types')->group(function () {
     Route::put('put/{typeID}', [TypeController::class, 'update']); // Actualizar un tipo
     Route::delete('delete/{typeID}', [TypeController::class, 'destroy']); // Eliminar un tipo
 });
+

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/Reports.dart';
 import '../widgets/report_card.dart';
+import 'report_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Reports'),
+        backgroundColor: Colors.green,
       ),
       body: FutureBuilder<List<Report>>(
         future: futureReports,
@@ -35,7 +37,28 @@ class _HomeScreenState extends State<HomeScreen> {
             return Center(child: Text('No reports found'));
           } else {
             return ListView(
-              children: snapshot.data!.map((report) => ReportCard(report: report)).toList(),
+              children: snapshot.data!.map((report) {
+                return Card(
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    title: Text('Folio: ${report.folio}'),
+                    subtitle: Text('Building ID: ${report.buildingID}\nRoom ID: ${report.roomID}'),
+                    trailing: Icon(Icons.arrow_forward, color: Colors.green),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReportDetailScreen(report: report),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }).toList(),
             );
           }
         },

@@ -53,7 +53,7 @@ class Report extends Model
 
     public function goods()
     {
-        return $this->belongsTo(Goods::class, 'goodID', 'goodID'); 
+        return $this->belongsTo(Good::class, 'goodID', 'goodID'); 
     }
 
     public function user()

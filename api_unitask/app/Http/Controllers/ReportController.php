@@ -76,7 +76,7 @@ class ReportController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|string',
             'matricula' => 'nullable|integer|exists:users,matricula',
-            'status' => 'nullable|in:Pending,In Progress,Completed',
+            'status' => 'nullable|in:Pending,Diagnostiqued,Completed',
         ]);
 
         $report = Report::findOrFail($folio);
@@ -92,5 +92,11 @@ class ReportController extends Controller
         $report->delete();
 
         return response()->json(['message' => 'Report deleted successfully'], 200);
+    }
+
+    public function GetdiagnosticNot ()
+    {
+        $reports = Report::where('status', 'Diagnostiqued')->get();
+        return response()->json($reports, 200);
     }
 }

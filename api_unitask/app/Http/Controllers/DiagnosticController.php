@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Diagnostic;
 use Illuminate\Http\Request;
+use App\Models\Report;
 
 class DiagnosticController extends Controller
 {
@@ -22,18 +23,21 @@ class DiagnosticController extends Controller
 
     // Crear un nuevo diagnóstico
     public function store(Request $request)
-    {
-        $request->validate([
-            'folio' => 'required|string|max:10|exists:reports,folio',
-            'description' => 'required|string',
-            'images' => 'nullable|array', // Debe ser un array si se envía
-            'images.*' => 'string', // Cada elemento del array debe ser una cadena (ruta de la imagen)
-            'completed' => 'nullable|boolean',
-        ]);
+{
+    $request->validate([
+        'folio' => 'required|string|max:10|exists:reports,folio',
+        'description' => 'required|string',
+        'images' => 'nullable|array', // Debe ser un array si se envía
+        'images.*' => 'string', // Cada elemento del array debe ser una cadena (ruta de la imagen)
+        'completed' => 'nullable|boolean',
+    ]);
 
-        $diagnostic = Diagnostic::create($request->all());
-        return response()->json($diagnostic, 201);
-    }
+    $diagnostic = Diagnostic::create($request->all());
+
+    Report::where('folio', $request->folio)->update(['status' => 'Completed']);
+
+    return response()->json($diagnostic, 201);
+}
 
     // Mostrar un diagnóstico específico
     public function show($id)

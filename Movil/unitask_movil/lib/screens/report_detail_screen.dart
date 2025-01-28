@@ -13,39 +13,69 @@ class ReportDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Report Details'),
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Folio: ${report.folio}'),
-            Text('Building ID: ${report.buildingID}'),
-            Text('Room ID: ${report.roomID}'),
-            Text('Category ID: ${report.categoryID}'),
-            Text('Good ID: ${report.goodID}'),
-            Text('Priority: ${report.priority}'),
-            Text('Description: ${report.description}'),
-            Text('User ID: ${report.userID}'),
-            Text('Status: ${report.status}'),
-            Text('Created At: ${report.createdAt}'),
-            Text('Updated At: ${report.updatedAt}'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DiagnosticScreen(report: report),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: Text('Diagnosticar'),
+            ),
             SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DiagnosticScreen(report: report),
-                    ),
-                  );
-                },
-                child: Text('Diagnosticar'),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow('Folio', report.folio),
+                    _buildDetailRow('Building ID', report.buildingID),
+                    _buildDetailRow('Room ID', report.roomID),
+                    _buildDetailRow('Category ID', report.categoryID.toString()),
+                    _buildDetailRow('Good ID', report.goodID.toString()),
+                    _buildDetailRow('Priority', report.priority),
+                    _buildDetailRow('Description', report.description),
+                    _buildDetailRow('Status', report.status),
+                    _buildDetailRow('Created At', report.createdAt.toString()),
+                    _buildDetailRow('Updated At', report.updatedAt.toString()),
+                  ],
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(value),
+        ],
       ),
     );
   }
