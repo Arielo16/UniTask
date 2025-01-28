@@ -56,6 +56,7 @@ Route::prefix('rooms')->group(function () {
 
 Route::prefix('diagnostics')->group(function () {
     Route::get('get/', [DiagnosticController::class, 'index']); // Obtener todos los diagnósticos
+    Route::get('todo/', [DiagnosticController::class, 'todo']); // Obtener todos los diagnósticos
     Route::post('post/', [DiagnosticController::class, 'store']); // Crear un diagnóstico
     Route::get('get/{id}', [DiagnosticController::class, 'show']); // Obtener un diagnóstico específico
     Route::put('put/{id}', [DiagnosticController::class, 'update']); // Actualizar un diagnóstico
