@@ -13,12 +13,11 @@ class Building extends Model
 
     protected $primaryKey = 'buildingID'; 
 
-    public $incrementing = false; // Indico que la llave primaria no es incremental
+    public $incrementing = true; 
 
-    protected $keyType = 'string'; // Tipo de la llave primaria
+    protected $keyType = 'int';
     
-    protected $fillable = ['buildingID']; // Columnas asignables en masa
-
+    protected $fillable = ['name', 'key']; 
 
     public function rooms()
     {

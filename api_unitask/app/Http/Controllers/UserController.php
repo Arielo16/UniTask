@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -39,6 +40,24 @@ class UserController extends Controller
         ]);
 
         return response()->json($user, 201);
+    }
+
+    // Autenticar usuario
+    public function login(Request $request)
+    {
+        $request->validate([
+            'institutional_email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('institutional_email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return response()->json(['message' => 'Login successful', 'user' => $user], 200);
+        } else {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
     }
 
     // Mostrar un usuario específico

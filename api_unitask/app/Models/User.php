@@ -3,45 +3,69 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class Report extends Model
 {
     use HasFactory;
 
-    protected $table = 'users'; // Nombre de la tabla
+    protected $table = 'reports'; 
 
-    protected $primaryKey = 'matricula'; // Cambiar la llave primaria a "matricula"
+    protected $primaryKey = 'report_id'; 
 
-    public $incrementing = false; // Deshabilitar incremento automático para la llave primaria
-
-    protected $keyType = 'string'; // Tipo de la llave primaria
+    public $incrementing = true; 
 
     protected $fillable = [
-        'matricula',
-        'first_name',
-        'last_name',
-        'middle_name',
-        'institutional_email',
-        'password',
-        'birth_date',
-    ]; // Campos asignables en masa
+        'folio',
+        'buildingID',
+        'room_id',
+        'category_id',
+        'good_id',
+        'attention_level',
+        'description',
+        'image',
+        'reported_by',
+        'status_id',
+        'requires_approval',
+        'involve_third_parties',
+    ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ]; // Ocultar estos campos en serializaciones JSON
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($report) {
+            $report->folio = strtoupper(Str::random(rand(6, 7))); 
+        });
+    }
 
-    protected $casts = [
-        'birth_date' => 'date',
-    ]; // Casting del campo birth_date
+    public function building()
+    {
+        return $this->belongsTo(Building::class, 'buildingID', 'buildingID');
+    }
 
-    /**
-     * Relación con otros modelos si es necesario.
-     */
-    // Ejemplo:
-    // public function reports()
-    // {
-    //     return $this->hasMany(Report::class, 'matricula', 'matricula');
-    // }
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id', 'room_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
+
+    public function good()
+    {
+        return $this->belongsTo(Good::class, 'good_id', 'good_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'reported_by', 'user_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id', 'status_id');
+    }
 }

@@ -3,62 +3,38 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->string('matricula', 20)->primary(); // Matricula como llave primaria
-            $table->string('first_name'); // Nombre
-            $table->string('last_name'); // PrimerApellido
-            $table->string('middle_name')->nullable(); // SegundoApellido
-            $table->string('institutional_email')->unique(); // Correo institucional
-            $table->string('password'); // Contraseña
-            $table->date('birth_date'); // Fecha-Nacimiento
-            $table->timestamps(); // Timestamps (created_at, updated_at)
-        });
+        Schema::create('reports', function (Blueprint $table) {
+            $table->id('reportID'); 
+            $table->string('folio', 7)->unique(); 
+            $table->string('buildingID', 10); 
+            $table->string('roomID', 10); 
+            $table->unsignedBigInteger('categoryID'); 
+            $table->unsignedBigInteger('goodID'); 
+            $table->enum('attention_level', ['Immediate', 'Normal']); 
+            $table->text('description'); 
+            $table->string('image')->nullable(); 
+            $table->unsignedBigInteger('userID'); 
+            $table->unsignedBigInteger('statusID'); 
+            $table->boolean('requires_approval')->default(false); 
+            $table->boolean('involve_third_parties')->default(false); 
+            $table->timestamps(); 
 
-        DB::table('users')->insert([
-            [
-                'matricula' => '23090565',
-                'first_name' => 'Juan',
-                'last_name' => 'Pérez',
-                'middle_name' => 'González',
-                'institutional_email' => 'juan.perez@uni.edu',
-                'password' => bcrypt('password123'),
-                'birth_date' => '1990-01-01',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'matricula' => '23090566',
-                'first_name' => 'María',
-                'last_name' => 'López',
-                'middle_name' => 'Martínez',
-                'institutional_email' => 'maria.lopez@uni.edu',
-                'password' => bcrypt('password123'),
-                'birth_date' => '1992-02-02',
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            // Agrega más datos según sea necesario
-        ]);
+            $table->foreign('buildingID')->references('buildingID')->on('buildings')->onDelete('cascade');
+            $table->foreign('roomID')->references('roomID')->on('rooms')->onDelete('cascade');
+            $table->foreign('categoryID')->references('categoryID')->on('categories')->onDelete('cascade');
+            $table->foreign('goodID')->references('goodID')->on('goods')->onDelete('cascade');
+            $table->foreign('userID')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('statusID')->references('statusID')->on('statuses')->onDelete('cascade');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('reports');
     }
 };
