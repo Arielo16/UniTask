@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               255, 3, 3, 3)), // Color del título
                     ),
                     subtitle: Text(
-                      'Building ID: ${report.buildingID}\nRoom ID: ${report.roomID}',
+                      'Edificio: ${report.buildingID}\nSalon: ${report.roomID}',
                       style: TextStyle(
                           color: const Color.fromARGB(
                               255, 254, 253, 253)), // Color del subtítulo

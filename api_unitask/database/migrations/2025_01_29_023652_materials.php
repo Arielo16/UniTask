@@ -14,10 +14,10 @@ return new class extends Migration
             $table->string('supplier'); // Este es el proveedor
             $table->integer('quantity'); 
             $table->decimal('price', 10, 2); 
-            $table->unsignedBigInteger('diagnosis_id'); 
+            $table->unsignedBigInteger('diagnosticID'); 
             $table->timestamps();
 
-            $table->foreign('diagnosis_id')->references('diagnosis_id')->on('diagnoses')->onDelete('cascade');
+            $table->foreign('diagnosticID')->references('diagnosticID')->on('diagnostics')->onDelete('cascade');
         });
     }
 

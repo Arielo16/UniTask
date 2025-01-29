@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id('reportID'); 
             $table->string('folio', 7)->unique(); 
-            $table->string('buildingID', 1); 
-            $table->string('roomID', 10); 
+            $table->unsignedBigInteger('buildingID'); 
+            $table->unsignedBigInteger('roomID'); 
             $table->unsignedBigInteger('categoryID'); 
             $table->unsignedBigInteger('goodID'); 
             $table->enum('attention_level', ['Immediate', 'Normal']); 
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreign('roomID')->references('roomID')->on('rooms')->onDelete('cascade');
             $table->foreign('categoryID')->references('categoryID')->on('categories')->onDelete('cascade');
             $table->foreign('goodID')->references('goodID')->on('goods')->onDelete('cascade');
-            $table->foreign('userID')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('userID')->references('userID')->on('users')->onDelete('cascade');
             $table->foreign('statusID')->references('statusID')->on('statuses')->onDelete('cascade');
         });
     }
