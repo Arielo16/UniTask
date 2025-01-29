@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id('reportID'); 
             $table->string('folio', 7)->unique(); 
-            $table->string('buildingID', 10); 
+            $table->string('buildingID', 1); 
             $table->string('roomID', 10); 
             $table->unsignedBigInteger('categoryID'); 
             $table->unsignedBigInteger('goodID'); 
