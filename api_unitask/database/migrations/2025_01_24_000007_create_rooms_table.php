@@ -28,9 +28,15 @@ return new class extends Migration
         });
 
         // Insertar datos en la tabla "rooms"
-        //DB::table('rooms')->insert([
-            //['name' => 'M101', 'buildingID' => 'M', 'typeID' => '', 'created_at' => now(), 'updated_at' => now()],
-        //]);
+        DB::table('rooms')->insert([
+            ['name' => 'Aula 101', 'key' => 'A101', 'buildingID' => 1, 'typeID' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Laboratorio 202', 'key' => 'B202', 'buildingID' => 2, 'typeID' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Oficina 303', 'key' => 'C303', 'buildingID' => 3, 'typeID' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Auditorio 404', 'key' => 'D404', 'buildingID' => 4, 'typeID' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Biblioteca 505', 'key' => 'E505', 'buildingID' => 5, 'typeID' => 5, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Baño 606', 'key' => 'F606', 'buildingID' => 6, 'typeID' => 6, 'created_at' => now(), 'updated_at' => now()],
+            // Agrega más datos según sea necesario
+        ]);
     }
 
     /**
