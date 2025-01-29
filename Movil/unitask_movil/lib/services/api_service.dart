@@ -4,8 +4,10 @@ import 'package:http/http.dart' as http;
 import '../models/Reports.dart';
 
 class ApiService {
-  final String baseUrl = "http://10.0.2.2:8000/api"; // Cambia esto a la URL correcta
-
+  final String baseUrl = "http://localhost:8000/api"; // Cambia esto a la URL correcta
+  //http://10.0.2.2:8000/api pa telefono
+  //http://localhost:8000/api pa emulador
+  
   Future<List<Report>> fetchReports() async {
     final response = await http.get(Uri.parse('$baseUrl/reports/diagnostiqued'));
 

@@ -6,6 +6,8 @@ import '../widgets/report_card.dart';
 import 'report_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }

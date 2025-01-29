@@ -31,8 +31,10 @@ class Report extends Model
         'priority',
         'description',
         'image',
-        'matricula',
+        'userID',
         'status',
+        'requires_approval',
+        'involve_third_parties',
     ];
 
     // Relaciones
@@ -58,6 +60,6 @@ class Report extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'matricula', 'matricula');
+        return $this->belongsTo(User::class, 'userID', 'userID');
     }
 }

@@ -6,7 +6,7 @@ import 'diagnostic_screen.dart';
 class ReportDetailScreen extends StatelessWidget {
   final Report report;
 
-  ReportDetailScreen({required this.report});
+  const ReportDetailScreen({super.key, required this.report});
 
   @override
   Widget build(BuildContext context) {

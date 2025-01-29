@@ -6,7 +6,7 @@ import '../screens/report_detail_screen.dart';
 class ReportCard extends StatelessWidget {
   final Report report;
 
-  ReportCard({required this.report});
+  const ReportCard({super.key, required this.report});
 
   @override
   Widget build(BuildContext context) {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('roomID'); 
             $table->unsignedBigInteger('categoryID'); 
             $table->unsignedBigInteger('goodID'); 
-            $table->enum('attention_level', ['Immediate', 'Normal']); 
+            $table->enum('priority', ['Immediate', 'Normal']); 
             $table->text('description'); 
             $table->string('image')->nullable(); 
             $table->unsignedBigInteger('userID'); 
