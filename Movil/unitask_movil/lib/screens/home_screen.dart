@@ -1,8 +1,6 @@
-// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/Reports.dart';
-import '../widgets/report_card.dart';
 import 'report_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,85 +16,129 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    futureReports = ApiService().fetchReports();
+    _loadReports();
+  }
+
+  void _loadReports() {
+    setState(() {
+      futureReports = ApiService().fetchReports();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reports'),
-        backgroundColor: Colors.green[800],
+        title: const Text('Reports', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF00664F),
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                futureReports =
-                    ApiService().fetchReports(); // Refresh the reports
-              });
-            },
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loadReports,
           ),
         ],
       ),
-      body: FutureBuilder<List<Report>>(
-        future: futureReports,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Error: ${snapshot.error}',
-                    style: TextStyle(color: Colors.red)));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-                child: Text('No reports found',
-                    style: TextStyle(fontSize: 18, color: Colors.grey)));
-          } else {
-            return ListView(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              children: snapshot.data!.map((report) {
-                return Card(
-                  elevation: 8,
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  color:
-                      const Color.fromARGB(255, 13, 143, 82), // Fondo del Card
-                  child: ListTile(
-                    contentPadding: EdgeInsets.all(16),
-                    title: Text(
-                      'Folio: ${report.folio}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(
-                              255, 3, 3, 3)), // Color del título
-                    ),
-                    subtitle: Text(
-                      'Edificio: ${report.buildingID}\nSalon: ${report.roomID}',
-                      style: TextStyle(
-                          color: const Color.fromARGB(
-                              255, 254, 253, 253)), // Color del subtítulo
-                    ),
-                    trailing: Icon(Icons.arrow_forward,
-                        color: const Color.fromARGB(255, 240, 242, 240)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ReportDetailScreen(report: report),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }).toList(),
-            );
-          }
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _loadReports();
         },
+        child: FutureBuilder<List<Report>>(
+          future: futureReports,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No reports found',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              );
+            } else {
+              return GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final report = snapshot.data![index];
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(15),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReportDetailScreen(report: report),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Folio: ${report.folio}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Color(0xFF00664F),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Edificio: ${report.buildingID}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Text(
+                              'Salón: ${report.roomID}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.arrow_forward,
+                              color: const Color(0xFF4DC591),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navegar a la pantalla de creación de reportes
+        },
+        backgroundColor: const Color(0xFF00664F),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

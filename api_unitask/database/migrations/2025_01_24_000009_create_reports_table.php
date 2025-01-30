@@ -33,7 +33,6 @@ return new class extends Migration
             $table->foreign('statusID')->references('statusID')->on('statuses')->onDelete('cascade');
         });
 
-        // Insertar datos en la tabla "reports"
         DB::table('reports')->insert([
             [
                 'folio' => 'REP0001',
