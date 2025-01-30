@@ -61,14 +61,24 @@ class ReportDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildDetailRow('Folio', report.folio),
-                    _buildDetailRow('ID de Edificio', report.buildingID),
-                    _buildDetailRow('ID de Habitación', report.roomID),
                     _buildDetailRow(
-                        'ID de Categoría', report.categoryID.toString()),
-                    _buildDetailRow('ID de Bien', report.goodID.toString()),
+                        'Edificio', report.buildingName ?? 'No disponible'),
+                    _buildDetailRow(
+                        'Habitación', report.roomName ?? 'No disponible'),
+                    _buildDetailRow(
+                        'Categoría', report.categoryName ?? 'No disponible'),
+                    _buildDetailRow('Bien', report.goodName ?? 'No disponible'),
                     _buildDetailRow('Prioridad', report.priority),
                     _buildDetailRow('Descripción', report.description),
-                    _buildDetailRow('Estado', report.status),
+                    _buildDetailRow('Imagen', report.image ?? 'No disponible'),
+                    _buildDetailRow(
+                        'Usuario', report.userName ?? 'No disponible'),
+                    _buildDetailRow(
+                        'Estado', report.statusName ?? 'No disponible'),
+                    _buildDetailRow('Requiere Aprobación',
+                        report.requiresApproval ? 'Sí' : 'No'),
+                    _buildDetailRow('Involucra Terceros',
+                        report.involveThirdParties ? 'Sí' : 'No'),
                     _buildDetailRow('Creado en', report.createdAt.toString()),
                     _buildDetailRow(
                         'Actualizado en', report.updatedAt.toString()),

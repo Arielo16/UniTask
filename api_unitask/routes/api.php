@@ -14,7 +14,7 @@ use App\Http\Controllers\{
 
 // Definición de las rutas
 Route::prefix('reports')->group(function () {
-    Route::get('get/', [ReportController::class, 'index']);
+    Route::get('get/', [ReportController::class, 'index']); // Obtener todos los reportes
     Route::get('todo/', [ReportController::class, 'todo']);
     Route::post('post/', [ReportController::class, 'store']);
     Route::get('get/{folio}', [ReportController::class, 'show']);

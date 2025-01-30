@@ -104,14 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Edificio: ${report.buildingID}',
+                              'Edificio: ${report.buildingName}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black54,
                               ),
                             ),
                             Text(
-                              'Salón: ${report.roomID}',
+                              'Salón: ${report.roomName}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black54,

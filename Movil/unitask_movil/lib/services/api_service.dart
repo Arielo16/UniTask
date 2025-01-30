@@ -30,13 +30,20 @@ class ApiService {
   }
 
   Future<List<Report>> fetchReports() async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/reports/diagnostiqued'));
+    final response = await http.get(Uri.parse('$baseUrl/reports/get'));
 
     if (response.statusCode == 200) {
       List<dynamic> body = json.decode(response.body);
-      List<Report> reports =
-          body.map((dynamic item) => Report.fromJson(item)).toList();
+      List<Report> reports = body.map((dynamic item) {
+        var report = Report.fromJson(item);
+        report.buildingName = item['building']['key']; // Use 'key' instead of 'name'
+        report.roomName = item['room']['name'];
+        report.categoryName = item['category']['name'];
+        report.goodName = item['goods']['name'];
+        report.userName = item['user']['name'];
+        report.statusName = item['status']['name'];
+        return report;
+      }).toList();
       return reports;
     } else {
       throw Exception('Failed to load reports');

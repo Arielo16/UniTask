@@ -17,7 +17,10 @@ class Building extends Model
 
     protected $keyType = 'int';
     
-    protected $fillable = ['name', 'key']; 
+    protected $fillable = [
+        'buildingID',
+        'name',
+    ];
 
     public function rooms()
     {

@@ -32,7 +32,7 @@ class Report extends Model
         'description',
         'image',
         'userID',
-        'status',
+        'statusID',
         'requires_approval',
         'involve_third_parties',
     ];
@@ -61,5 +61,10 @@ class Report extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'userID', 'userID');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'statusID', 'statusID');
     }
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('materials', function (Blueprint $table) {
-            $table->id('material_id'); 
+            $table->id('materialID'); 
             $table->string('name'); 
             $table->string('supplier'); // Este es el proveedor
             $table->integer('quantity'); 

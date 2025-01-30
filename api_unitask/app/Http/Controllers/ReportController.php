@@ -12,8 +12,16 @@ class ReportController extends Controller
     // Mostrar todos los reportes
     public function index(Request $request)
     {
-        $reports = Report::with(['building:id,buildingID,name', 'category:id,categoryID,name'])
-            ->get(['folio', 'buildingID', 'roomID', 'categoryID', 'goodID', 'priority', 'description', 'image', 'matricula', 'status', 'created_at']);
+        $reports = Report::with([
+                'building:buildingID,key',
+                'room:roomID,name',
+                'category:categoryID,name',
+                'goods:goodID,name',
+                'user:userID,name',
+                'status:statusID,name'
+            ])
+            ->get();
+
         return response()->json($reports, 200);
     }
 
