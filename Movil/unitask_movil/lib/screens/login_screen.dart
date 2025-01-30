@@ -14,13 +14,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _rememberMe = false;
   bool _isLoading = false;
+  String errorMessage = '';
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -31,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final apiService = ApiService();
-      final success = await apiService.login(
+      final response = await apiService.login(
         _emailController.text,
         _passwordController.text,
       );
@@ -40,12 +45,15 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
 
-      if (success) {
+      if (response.message == 'Si') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
+        setState(() {
+          errorMessage = 'Invalid credentials. Please try again.';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error al iniciar sesión')),
         );
@@ -84,6 +92,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           onLogin: _login,
                         ),
+                  if (errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text(
+                        errorMessage,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                 ],
               ),
             ),

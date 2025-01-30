@@ -12,17 +12,23 @@ class UserController extends Controller
     // Verificar el estado de inicio de sesión del usuario
     public function verifyLogin(Request $request)
     {
+        \Log::info('verifyLogin called', ['request' => $request->all()]);
+
         $credentials = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
+        \Log::info('Credentials validated', ['credentials' => $credentials]);
+
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return response()->json(['message' => 'Login successful'], 200);
+            \Log::info('Authentication successful');
+            //$request->session()->regenerate();
+            return response()->json(['message' => 'Si'], 200);
         }
 
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        \Log::info('Authentication failed');
+        return response()->json(['message' => 'No'], 401);
     }
 
     // Cerrar sesión de usuario

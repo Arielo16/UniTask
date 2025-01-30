@@ -1,13 +1,14 @@
 // lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/login_response.dart';
 import '../models/Reports.dart';
 
 class ApiService {
   final String baseUrl =
-      "http://10.0.2.2:8000/api"; // Cambia esto a la URL correcta para el emulador
+      "http://localhost:8000/api"; // Cambia esto a la URL correcta para el emulador
 
-  Future<bool> login(String email, String password) async {
+  Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/users/verifyLogin'),
       headers: <String, String>{
@@ -20,14 +21,11 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      // Si el servidor devuelve un código 200 OK, parsea el JSON
       final Map<String, dynamic> data = jsonDecode(response.body);
-      // Aquí puedes guardar el token de autenticación si es necesario
-      // Por ejemplo: await saveToken(data['token']);
-      return true;
+      return LoginResponse.fromJson(data);
     } else {
-      // Si la respuesta no fue 200, lanza un error
-      return false;
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return LoginResponse.fromJson(data);
     }
   }
 

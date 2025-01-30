@@ -22,7 +22,7 @@ class CardInicioSesion extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        width: 370, 
+        width: 370,
         child: Card(
           elevation: 5,
           shape: RoundedRectangleBorder(

@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginScreen(),
+      home: FocusScope(
+        child: LoginScreen(),
+      ),
     );
   }
 }
