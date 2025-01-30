@@ -9,6 +9,32 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    // Verificar el estado de inicio de sesión del usuario
+    public function verifyLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return response()->json(['message' => 'Login successful'], 200);
+        }
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    // Cerrar sesión de usuario
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logout successful'], 200);
+    }
+
     // Obtener todos los usuarios
     public function index()
     {
@@ -21,49 +47,31 @@ class UserController extends Controller
     {
         $request->validate([
             'matricula' => 'required|string|max:20|unique:users',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'institutional_email' => 'required|string|email|max:255|unique:users,institutional_email',
+            'name' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'secundlastname' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
-            'birth_date' => 'required|date',
+            'birthday' => 'required|date',
         ]);
 
         $user = User::create([
             'matricula' => $request->matricula,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'middle_name' => $request->middle_name,
-            'institutional_email' => $request->institutional_email,
+            'name' => $request->name,
+            'lastname' => $request->lastname,
+            'secundlastname' => $request->secundlastname,
+            'email' => $request->email,
             'password' => Hash::make($request->password), // Encriptar contraseña
-            'birth_date' => $request->birth_date,
+            'birthday' => $request->birthday,
         ]);
 
         return response()->json($user, 201);
     }
 
-    // Autenticar usuario
-    public function login(Request $request)
-    {
-        $request->validate([
-            'institutional_email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $credentials = $request->only('institutional_email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json(['message' => 'Login successful', 'user' => $user], 200);
-        } else {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-    }
-
     // Mostrar un usuario específico
     public function show($matricula)
     {
-        $user = User::findOrFail($matricula);
+        $user = User::where('matricula', $matricula)->firstOrFail();
         return response()->json($user, 200);
     }
 
@@ -71,15 +79,15 @@ class UserController extends Controller
     public function update(Request $request, $matricula)
     {
         $request->validate([
-            'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'institutional_email' => 'nullable|string|email|max:255|unique:users,institutional_email,' . $matricula . ',matricula',
+            'name' => 'nullable|string|max:255',
+            'lastname' => 'nullable|string|max:255',
+            'secundlastname' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users,email,' . $matricula . ',matricula',
             'password' => 'nullable|string|min:8',
-            'birth_date' => 'nullable|date',
+            'birthday' => 'nullable|date',
         ]);
 
-        $user = User::findOrFail($matricula);
+        $user = User::where('matricula', $matricula)->firstOrFail();
         $data = $request->all();
 
         if ($request->has('password')) {
@@ -93,7 +101,7 @@ class UserController extends Controller
     // Eliminar un usuario
     public function destroy($matricula)
     {
-        $user = User::findOrFail($matricula);
+        $user = User::where('matricula', $matricula)->firstOrFail();
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }

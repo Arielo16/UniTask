@@ -4,13 +4,12 @@ import 'package:http/http.dart' as http;
 import '../models/Reports.dart';
 
 class ApiService {
-  final String baseUrl = "http://localhost:8000/api"; // Cambia esto a la URL correcta
-  //http://10.0.2.2:8000/api pa telefono
-  //http://localhost:8000/api pa emulador
+  final String baseUrl =
+      "http://10.0.2.2:8000/api"; // Cambia esto a la URL correcta para el emulador
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'),
+      Uri.parse('$baseUrl/users/verifyLogin'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -31,13 +30,15 @@ class ApiService {
       return false;
     }
   }
-  
+
   Future<List<Report>> fetchReports() async {
-    final response = await http.get(Uri.parse('$baseUrl/reports/diagnostiqued'));
+    final response =
+        await http.get(Uri.parse('$baseUrl/reports/diagnostiqued'));
 
     if (response.statusCode == 200) {
       List<dynamic> body = json.decode(response.body);
-      List<Report> reports = body.map((dynamic item) => Report.fromJson(item)).toList();
+      List<Report> reports =
+          body.map((dynamic item) => Report.fromJson(item)).toList();
       return reports;
     } else {
       throw Exception('Failed to load reports');
