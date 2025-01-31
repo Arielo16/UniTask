@@ -46,15 +46,16 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
       _formKey.currentState!.save();
       try {
         print('Report ID: ${widget.report.reportID}'); // Verificar el reportID
-        final diagnosticID = await ApiService().postDiagnostic(
-          reportID: widget.report.reportID,
-          description: _description,
-          images: null, // Aquí se envía null para las imágenes
-          status: _statusOptions[_status]!, // Convierte el estado a su valor correspondiente
-          materials: _materials, // Lista de materiales
-        );
+        // Remove the call to postDiagnostic
+        // final diagnosticID = await ApiService().postDiagnostic(
+        //   reportID: widget.report.reportID,
+        //   description: _description,
+        //   images: null, // Aquí se envía null para las imágenes
+        //   status: _statusOptions[_status]!, // Convierte el estado a su valor correspondiente
+        //   materials: _materials, // Lista de materiales
+        // );
         await ApiService().postMaterials(
-          diagnosticID: diagnosticID,
+          diagnosticID: 0, // Use a placeholder value or handle appropriately
           materials: _materials,
         );
         ScaffoldMessenger.of(context).showSnackBar(

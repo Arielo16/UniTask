@@ -109,13 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: Colors.green[800],
         onTap: _onItemTapped,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navegar a la pantalla de creación de reportes
-        },
-        backgroundColor: const Color(0xFF00664F),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
     );
   }
 
