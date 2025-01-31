@@ -61,7 +61,7 @@ class MovilController extends Controller
     public function getAllDiagnostics()
     {
         $diagnostics = DB::table('diagnostics')
-            ->join('reports', 'diagnostics.reportID', '=', 'reports.folio')
+            ->join('reports', 'diagnostics.reportID', '=', 'reports.reportID')
             ->select(
                 'diagnostics.diagnosticID',
                 'diagnostics.reportID',
@@ -81,7 +81,7 @@ class MovilController extends Controller
         $status = $request->status;
 
         $diagnostics = DB::table('diagnostics')
-            ->join('reports', 'diagnostics.reportID', '=', 'reports.folio')
+            ->join('reports', 'diagnostics.reportID', '=', 'reports.reportID')
             ->where('diagnostics.status', $status)
             ->select(
                 'diagnostics.diagnosticID',
@@ -109,5 +109,19 @@ class MovilController extends Controller
         $diagnostic = Diagnostic::create($validatedData);
 
         return response()->json($diagnostic, 201);
+    }
+
+    public function updateDiagnosticStatus(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|integer',
+            'status' => 'required|string',
+        ]);
+
+        $diagnostic = Diagnostic::findOrFail($validatedData['id']);
+        $diagnostic->status = $validatedData['status'];
+        $diagnostic->save();
+
+        return response()->json($diagnostic);
     }
 }

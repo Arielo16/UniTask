@@ -88,3 +88,4 @@ Route::get('/getallreports', [MovilController::class, 'getAllReports']);
 Route::get('/getalldiagnostics', [MovilController::class, 'getAllDiagnostics']);
 Route::get('/getalldiagnosticsstatus', [MovilController::class, 'getAllDiagnosticsStatus']);
 Route::post('/postdiagnostic', [MovilController::class, 'postDiagnostic']);
+Route::put('/updatediagnosticstatus', [MovilController::class, 'updateDiagnosticStatus']);

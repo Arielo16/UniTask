@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id('diagnosticID'); 
             $table->unsignedBigInteger('reportID');
             $table->text('description');
-            $table->json('images');
+            $table->mediumText('images');
             $table->enum('status', ['Enviado', 'EnviadoAprobacion', 'EnProceso', 'Terminado']);
             $table->timestamps();
 
@@ -31,7 +31,7 @@ return new class extends Migration
             [
                 'reportID' => 1,
                 'description' => 'Diagnostic for broken chair in room 101',
-                'images' => json_encode(['image1.jpg', 'image2.jpg']),
+                'images' => '',
                 'status' => 'Enviado',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -39,7 +39,7 @@ return new class extends Migration
             [
                 'reportID' => 2,
                 'description' => 'Diagnostic for window repair in room 202',
-                'images' => json_encode(['image3.jpg', 'image4.jpg']),
+                'images' => '',
                 'status' => 'EnviadoAprobacion',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -47,7 +47,7 @@ return new class extends Migration
             [
                 'reportID' => 3,
                 'description' => 'Diagnostic for electrical issue in room 303',
-                'images' => json_encode(['image5.jpg', 'image6.jpg']),
+                'images' => '',
                 'status' => 'EnProceso',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -55,7 +55,7 @@ return new class extends Migration
             [
                 'reportID' => 4,
                 'description' => 'Diagnostic for broken window in room 404',
-                'images' => json_encode(['image7.jpg', 'image8.jpg']),
+                'images' => '',
                 'status' => 'Terminado',
                 'created_at' => now(),
                 'updated_at' => now()
@@ -63,12 +63,11 @@ return new class extends Migration
             [
                 'reportID' => 5,
                 'description' => 'Diagnostic for plumbing issue in room 505',
-                'images' => json_encode(['image9.jpg', 'image10.jpg']),
+                'images' => '',
                 'status' => 'Enviado',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            // Agrega más datos según sea necesario
         ]);
     }
 
