@@ -8,7 +8,7 @@ import 'home_screen.dart';
 class DiagnosticScreen extends StatefulWidget {
   final Report report;
 
-  const DiagnosticScreen({super.key, required this.report});
+  DiagnosticScreen({required this.report});
 
   @override
   _DiagnosticScreenState createState() => _DiagnosticScreenState();

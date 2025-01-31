@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Material extends Model
 {
     use HasFactory;
@@ -21,8 +22,8 @@ class Material extends Model
         'diagnosis_id',
     ];
 
-    public function diagnosis()
+    public function diagnostic()
     {
-        return $this->belongsTo(Diagnosis::class, 'diagnosis_id', 'diagnosis_id');
+        return $this->belongsTo(Diagnostic::class, 'diagnosis_id', 'diagnosis_id');
     }
 }
