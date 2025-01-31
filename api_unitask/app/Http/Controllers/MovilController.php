@@ -100,13 +100,18 @@ class MovilController extends Controller
     public function postDiagnostic(Request $request)
     {
         $validatedData = $request->validate([
-            'reportID' => 'required|string',
+            'reportID' => 'required|integer',
             'description' => 'required|string',
             'images' => 'nullable|string',
             'status' => 'required|string',
         ]);
 
-        $diagnostic = Diagnostic::create($validatedData);
+        $diagnostic = new Diagnostic();
+        $diagnostic->reportID = $validatedData['reportID'];
+        $diagnostic->description = $validatedData['description'];
+        $diagnostic->images = $validatedData['images'];
+        $diagnostic->status = $validatedData['status'];
+        $diagnostic->save();
 
         return response()->json($diagnostic, 201);
     }
@@ -114,11 +119,11 @@ class MovilController extends Controller
     public function updateDiagnosticStatus(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'required|integer',
+            'diagnosticID' => 'required|integer',
             'status' => 'required|string',
         ]);
 
-        $diagnostic = Diagnostic::findOrFail($validatedData['id']);
+        $diagnostic = Diagnostic::findOrFail($validatedData['diagnosticID']);
         $diagnostic->status = $validatedData['status'];
         $diagnostic->save();
 

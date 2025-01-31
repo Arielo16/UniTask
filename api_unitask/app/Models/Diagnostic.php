@@ -15,11 +15,13 @@ class Diagnostic extends Model
 
     public $timestamps = true; // Activa las columnas created_at y updated_at
 
+    public $incrementing = true; // Incremento automático habilitado
+
     protected $fillable = [
-        'folio',
+        'reportID',
         'description',
         'images',
-        'completed',
+        'status',
     ]; // Campos asignables en masa
 
     protected $casts = [
