@@ -62,13 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _screens = [
+    List<Widget> screens = [
       _buildReportsScreen(),
       _buildDiagnosticsScreen(),
       _buildHistoryScreen(),
     ];
 
-    List<String> _titles = [
+    List<String> titles = [
       'Reportes',
       'Diagnósticos en Proceso',
       'Historial de Diagnósticos',
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
+        title: Text(titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF00664F),
         elevation: 0,
         actions: [
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _screens[_selectedIndex],
+      body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(

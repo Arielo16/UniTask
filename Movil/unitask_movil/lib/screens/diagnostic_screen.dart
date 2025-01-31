@@ -6,7 +6,7 @@ import '../services/api_service.dart';
 class DiagnosticScreen extends StatefulWidget {
   final Report report;
 
-  DiagnosticScreen({required this.report});
+  const DiagnosticScreen({super.key, required this.report});
 
   @override
   _DiagnosticScreenState createState() => _DiagnosticScreenState();
@@ -16,7 +16,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
   final _formKey = GlobalKey<FormState>();
   String _description = '';
   String _status = 'Pendiente';
-  List<Map<String, dynamic>> _materials = [];
+  final List<Map<String, dynamic>> _materials = [];
 
   final Map<String, String> _statusOptions = {
     'Pendiente': 'Pendiente',
@@ -45,17 +45,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        print('Report ID: ${widget.report.reportID}'); // Verificar el reportID
-        // Remove the call to postDiagnostic
-        // final diagnosticID = await ApiService().postDiagnostic(
-        //   reportID: widget.report.reportID,
-        //   description: _description,
-        //   images: null, // Aquí se envía null para las imágenes
-        //   status: _statusOptions[_status]!, // Convierte el estado a su valor correspondiente
-        //   materials: _materials, // Lista de materiales
-        // );
+        final diagnosticID = await ApiService().postDiagnostic(
+          reportID: widget.report.reportID,
+          description: _description,
+          status: _statusOptions[_status]!,
+          images: null, // Aquí se envía null para las imágenes
+        );
         await ApiService().postMaterials(
-          diagnosticID: 0, // Use a placeholder value or handle appropriately
+          diagnosticID: diagnosticID,
           materials: _materials,
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -225,24 +222,24 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () => _removeMaterial(index),
-                          child: Text('Eliminar Material', style: TextStyle(color: Colors.white)),
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          child: Text('Eliminar Material', style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
                   ),
                 );
-              }).toList(),
+              }),
               ElevatedButton(
                 onPressed: _addMaterial,
-                child: Text('Agregar Material', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+                child: Text('Agregar Material', style: TextStyle(color: Colors.white)),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitDiagnostic,
-                child: Text('Enviar Diagnóstico', style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+                child: Text('Enviar Diagnóstico', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

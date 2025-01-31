@@ -8,7 +8,8 @@ import '../models/Diagnostic.dart';
 class ApiService {
   final String baseUrl =
       //"http://10.0.2.2:8000/api";
-      "http://localhost:8000/api"; // Cambia esto a la URL correcta para el emulador
+      "https://apiunitaskproduction-production.up.railway.app/api";
+  //"http://localhost:8000/api";
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
@@ -111,6 +112,33 @@ class ApiService {
 
     if (response.statusCode != 201) {
       throw Exception('Failed to post materials: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<int> postDiagnostic({
+    required int reportID,
+    required String description,
+    required String status,
+    String? images,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/postdiagnostic'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'reportID': reportID,
+        'description': description,
+        'status': status,
+        'images': images,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return data['diagnosticID'];
+    } else {
+      throw Exception('Failed to post diagnostic: ${response.reasonPhrase}');
     }
   }
 }
