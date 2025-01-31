@@ -19,11 +19,11 @@ class Material extends Model
         'supplier',
         'quantity',
         'price',
-        'diagnosis_id',
+        'diagnosticID',
     ];
 
     public function diagnostic()
     {
-        return $this->belongsTo(Diagnostic::class, 'diagnosis_id', 'diagnosis_id');
+        return $this->belongsTo(Diagnostic::class, 'diagnosticID', 'diagnosticID');
     }
 }

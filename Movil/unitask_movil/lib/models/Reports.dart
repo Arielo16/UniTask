@@ -1,5 +1,6 @@
 // lib/models/report.dart
 class Report {
+  final int reportID;
   final String folio;
   final int buildingID;
   final int roomID;
@@ -23,6 +24,7 @@ class Report {
   String? statusName;
 
   Report({
+    required this.reportID,
     required this.folio,
     required this.buildingID,
     required this.roomID,
@@ -41,6 +43,7 @@ class Report {
 
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
+      reportID: json['reportID'] ?? 0,
       folio: json['folio'] ?? '',
       buildingID: json['buildingID'] ?? 0,
       roomID: json['roomID'] ?? 0,

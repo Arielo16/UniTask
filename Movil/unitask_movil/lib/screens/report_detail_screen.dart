@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../models/Reports.dart';
 import 'diagnostic_screen.dart';
+import 'dart:convert';
 
 class ReportDetailScreen extends StatelessWidget {
   final Report report;
@@ -17,76 +18,72 @@ class ReportDetailScreen extends StatelessWidget {
         elevation: 4,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DiagnosticScreen(report: report),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[800], // Color de fondo
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                elevation: 5,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                foregroundColor: Colors.white, // Cambiar el color del texto
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add_circle_outline, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text('Diagnosticar'),
-                ],
-              ),
-            ),
-            SizedBox(height: 30),
-            Card(
-              elevation: 10,
-              shadowColor: const Color.fromARGB(255, 23, 129, 28),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              color: Colors.green[50],
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow('Folio', report.folio),
-                    _buildDetailRow(
-                        'Edificio', report.buildingName ?? 'No disponible'),
-                    _buildDetailRow(
-                        'Habitación', report.roomName ?? 'No disponible'),
-                    _buildDetailRow(
-                        'Categoría', report.categoryName ?? 'No disponible'),
-                    _buildDetailRow('Bien', report.goodName ?? 'No disponible'),
-                    _buildDetailRow('Prioridad', report.priority),
-                    _buildDetailRow('Descripción', report.description),
-                    _buildDetailRow('Imagen', report.image ?? 'No disponible'),
-                    _buildDetailRow(
-                        'Usuario', report.userName ?? 'No disponible'),
-                    _buildDetailRow(
-                        'Estado', report.statusName ?? 'No disponible'),
-                    _buildDetailRow('Requiere Aprobación',
-                        report.requiresApproval ? 'Sí' : 'No'),
-                    _buildDetailRow('Involucra Terceros',
-                        report.involveThirdParties ? 'Sí' : 'No'),
-                    _buildDetailRow('Creado en', report.createdAt.toString()),
-                    _buildDetailRow(
-                        'Actualizado en', report.updatedAt.toString()),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow('Folio', report.folio),
+                      _buildDetailRow('Edificio', report.buildingName ?? 'No disponible'),
+                      _buildDetailRow('Habitación', report.roomName ?? 'No disponible'),
+                      _buildDetailRow('Categoría', report.categoryName ?? 'No disponible'),
+                      _buildDetailRow('Bien', report.goodName ?? 'No disponible'),
+                      _buildDetailRow('Prioridad', report.priority),
+                      _buildDetailRow('Descripción', report.description),
+                      _buildImageSection(report.image),
+                      _buildDetailRow('Usuario', report.userName ?? 'No disponible'),
+                      _buildDetailRow('Estado', report.statusName ?? 'No disponible'),
+                      _buildDetailRow('Requiere Aprobación', report.requiresApproval ? 'Sí' : 'No'),
+                      _buildDetailRow('Involucra Terceros', report.involveThirdParties ? 'Sí' : 'No'),
+                      _buildDetailRow('Creado en', report.createdAt.toString()),
+                      _buildDetailRow('Actualizado en', report.updatedAt.toString()),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    print('Navigating to DiagnosticScreen with reportID: ${report.reportID}');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiagnosticScreen(report: report),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.add_circle_outline, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text('Diagnosticar'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -94,12 +91,12 @@ class ReportDetailScreen extends StatelessWidget {
 
   Widget _buildDetailRow(String title, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            '$title: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.green[700],
@@ -109,8 +106,7 @@ class ReportDetailScreen extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              textAlign: TextAlign.right,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 16,
               ),
@@ -119,5 +115,37 @@ class ReportDetailScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildImageSection(String? base64Image) {
+    if (base64Image != null && base64Image.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Image.memory(
+          base64Decode(base64Image),
+          height: 200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          height: 200,
+          width: double.infinity,
+          color: Colors.grey[300],
+          child: Center(
+            child: Text(
+              'No hay imagen disponible',
+              style: TextStyle(
+                color: Colors.grey[700],
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

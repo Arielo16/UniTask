@@ -89,3 +89,7 @@ Route::get('/getalldiagnostics', [MovilController::class, 'getAllDiagnostics']);
 Route::get('/getalldiagnosticsstatus', [MovilController::class, 'getAllDiagnosticsStatus']);
 Route::post('/postdiagnostic', [MovilController::class, 'postDiagnostic']);
 Route::put('/updatediagnosticstatus', [MovilController::class, 'updateDiagnosticStatus']);
+Route::get('/getreportbyfolio', [MovilController::class, 'getReportByFolio']);
+Route::get('/getreportbyfolio', [MovilController::class, 'getReportByFolio']);
+Route::post('/postmaterials', [MovilController::class, 'postMaterials']);
+Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 'getMaterialsByDiagnostic']);

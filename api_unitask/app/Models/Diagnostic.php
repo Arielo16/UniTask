@@ -34,6 +34,6 @@ class Diagnostic extends Model
      */
     public function report()
     {
-        return $this->belongsTo(Report::class, 'folio', 'folio');
+        return $this->belongsTo(Report::class, 'reportID', 'reportID');
     }
 }

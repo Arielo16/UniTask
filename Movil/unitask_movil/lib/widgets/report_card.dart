@@ -11,9 +11,12 @@ class ReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        title: Text(report.folio),
-        subtitle: Text(report.description),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
         onTap: () {
           Navigator.push(
             context,
@@ -22,6 +25,46 @@ class ReportCard extends StatelessWidget {
             ),
           );
         },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          constraints: BoxConstraints(minHeight: 150), // Asegurar un tamaño mínimo
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Folio: ${report.folio}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Color(0xFF00664F),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Edificio: ${report.buildingName ?? 'No disponible'}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+              Text(
+                'Salón: ${report.roomName ?? 'No disponible'}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: const Color(0xFF4DC591),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

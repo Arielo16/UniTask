@@ -1,9 +1,7 @@
-// lib/screens/diagnostic_screen.dart
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/Reports.dart';
-import 'home_screen.dart';
+import '../services/api_service.dart';
 
 class DiagnosticScreen extends StatefulWidget {
   final Report report;
@@ -16,55 +14,56 @@ class DiagnosticScreen extends StatefulWidget {
 
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
-  final FocusNode _descriptionFocusNode = FocusNode();
-  bool _isCompleted = false;
+  String _description = '';
+  String _status = 'Pendiente';
+  List<Map<String, dynamic>> _materials = [];
 
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    _descriptionFocusNode.dispose();
-    super.dispose();
+  final Map<String, String> _statusOptions = {
+    'Pendiente': 'Pendiente',
+    'En proceso': 'EnProceso',
+    'Completado': 'Completado',
+  };
+
+  void _addMaterial() {
+    setState(() {
+      _materials.add({
+        'name': '',
+        'supplier': '',
+        'quantity': 0,
+        'price': 0.0,
+      });
+    });
   }
 
-  Future<void> _submitDiagnosis() async {
+  void _removeMaterial(int index) {
+    setState(() {
+      _materials.removeAt(index);
+    });
+  }
+
+  void _submitDiagnostic() async {
     if (_formKey.currentState!.validate()) {
-      final description = _descriptionController.text;
-      final completed = _isCompleted;
-      final folio = widget.report.folio;
-      final images = ["imagen2.jpg"];
-
+      _formKey.currentState!.save();
       try {
-        final response = await http.post(
-          Uri.parse('http://localhost:8000/api/diagnostics/post'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, dynamic>{
-            'folio': folio,
-            'description': description,
-            'images': images,
-            'completed': completed,
-          }),
+        print('Report ID: ${widget.report.reportID}'); // Verificar el reportID
+        final diagnosticID = await ApiService().postDiagnostic(
+          reportID: widget.report.reportID,
+          description: _description,
+          images: null, // Aquí se envía null para las imágenes
+          status: _statusOptions[_status]!, // Convierte el estado a su valor correspondiente
+          materials: _materials, // Lista de materiales
         );
-
-        if (response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Diagnóstico enviado exitosamente')),
-          );
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-            (Route<dynamic> route) => false,
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al enviar el diagnóstico')),
-          );
-        }
+        await ApiService().postMaterials(
+          diagnosticID: diagnosticID,
+          materials: _materials,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Diagnóstico enviado con éxito')),
+        );
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error de red: $e')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     }
@@ -72,87 +71,179 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Diagnóstico'),
-          backgroundColor: Colors.green,
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Card(
-            elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Folio: ${widget.report.folio}',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _descriptionController,
-                      focusNode: _descriptionFocusNode,
-                      decoration: InputDecoration(
-                        labelText: 'Descripción',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        prefixIcon: Icon(Icons.description),
-                      ),
-                      maxLines: 4,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingrese una descripción';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    CheckboxListTile(
-                      title: Text('¿Terminado?'),
-                      value: _isCompleted,
-                      onChanged: (value) {
-                        setState(() {
-                          _isCompleted = value!;
-                        });
-                      },
-                      activeColor: Colors.green,
-                      controlAffinity: ListTileControlAffinity.leading,
-                    ),
-                    SizedBox(height: 30),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _submitDiagnosis,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.green, // Aquí se usa backgroundColor
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 12,
-                          ),
-                          textStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        child: Text('Enviar Diagnóstico'),
-                      ),
-                    ),
-                  ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Diagnóstico'),
+        backgroundColor: const Color(0xFF00664F),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Descripción',
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(Icons.description, color: Color(0xFF00664F)),
                 ),
+                onSaved: (value) {
+                  _description = value!;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese una descripción';
+                  }
+                  return null;
+                },
               ),
-            ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _status,
+                decoration: InputDecoration(
+                  labelText: 'Estado',
+                  labelStyle: TextStyle(color: Colors.white),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(Icons.assignment, color: Color(0xFF00664F)),
+                ),
+                items: _statusOptions.keys
+                    .map((status) => DropdownMenuItem(
+                          value: status,
+                          child: Text(status),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _status = value!;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              Text('Materiales', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              const SizedBox(height: 8),
+              ..._materials.asMap().entries.map((entry) {
+                int index = entry.key;
+                Map<String, dynamic> material = entry.value;
+                return Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Nombre del Material',
+                            labelStyle: TextStyle(color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: const Icon(Icons.build, color: Color(0xFF00664F)),
+                          ),
+                          onSaved: (value) {
+                            material['name'] = value!;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingrese el nombre del material';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Proveedor',
+                            labelStyle: TextStyle(color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: const Icon(Icons.store, color: Color(0xFF00664F)),
+                          ),
+                          onSaved: (value) {
+                            material['supplier'] = value!;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingrese el proveedor';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Cantidad',
+                            labelStyle: TextStyle(color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: const Icon(Icons.format_list_numbered, color: Color(0xFF00664F)),
+                          ),
+                          keyboardType: TextInputType.number,
+                          onSaved: (value) {
+                            material['quantity'] = int.parse(value!);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingrese la cantidad';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Precio',
+                            labelStyle: TextStyle(color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: const Icon(Icons.attach_money, color: Color(0xFF00664F)),
+                          ),
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          onSaved: (value) {
+                            material['price'] = double.parse(value!);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingrese el precio';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () => _removeMaterial(index),
+                          child: Text('Eliminar Material', style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+              ElevatedButton(
+                onPressed: _addMaterial,
+                child: Text('Agregar Material', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _submitDiagnostic,
+                child: Text('Enviar Diagnóstico', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+              ),
+            ],
           ),
         ),
       ),
