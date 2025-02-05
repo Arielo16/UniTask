@@ -40,18 +40,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // void _searchReport() async {
-  //   try {
-  //     final report = await ApiService().fetchReportByFolio(_searchController.text);
-  //     setState(() {
-  //       searchedReports = [report];
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(e.toString())),
-  //     );
-  //   }
-  // }
+  void _searchReport() async {
+    try {
+      final report = await ApiService().fetchReportByFolio(_searchController.text);
+      setState(() {
+        searchedReports = [report];
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -133,9 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.search, color: Color(0xFF00664F)),
-                onPressed: () {
-                  // _searchReport();
-                },
+                onPressed: _searchReport,
               ),
             ],
           ),
@@ -306,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadDiagnostics();
                     });
                   },
-                  items: <String>['Completado', 'EnProceso', 'Pendiente']
+                  items: <String>['Completado', 'EnProceso', 'Enviado']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,

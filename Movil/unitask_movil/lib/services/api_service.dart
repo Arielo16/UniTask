@@ -7,9 +7,7 @@ import '../models/Diagnostic.dart';
 
 class ApiService {
   final String baseUrl =
-      //"http://10.0.2.2:8000/api";
-      "https://apiunitaskproduction-production.up.railway.app/api";
-  //"http://localhost:8000/api";
+      "https://apiunitaskproduction-production.up.railway.app/api"; // Asegúrate de que esta URL sea correcta
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
@@ -39,8 +37,7 @@ class ApiService {
       List<dynamic> body = json.decode(response.body);
       List<Report> reports = body.map((dynamic item) {
         var report = Report.fromJson(item);
-        report.buildingName =
-            item['building']['key']; // Use 'key' instead of 'name'
+        report.buildingName = item['building']['key']; // Use 'key' instead of 'name'
         report.roomName = item['room']['name'];
         report.categoryName = item['category']['name'];
         report.goodName = item['goods']['name'];
@@ -95,6 +92,33 @@ class ApiService {
     }
   }
 
+  Future<int> postDiagnostic({
+    required int reportID,
+    required String description,
+    required String status,
+    String? images,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/postdiagnostic'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'reportID': reportID,
+        'description': description,
+        'images': 'imagen',
+        'status': status,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return data['diagnosticID'];
+    } else {
+      throw Exception('Failed to post diagnostic: ${response.reasonPhrase}');
+    }
+  }
+
   Future<void> postMaterials({
     required int diagnosticID,
     required List<Map<String, dynamic>> materials,
@@ -112,33 +136,6 @@ class ApiService {
 
     if (response.statusCode != 201) {
       throw Exception('Failed to post materials: ${response.reasonPhrase}');
-    }
-  }
-
-  Future<int> postDiagnostic({
-    required int reportID,
-    required String description,
-    required String status,
-    String? images,
-  }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/postdiagnostic'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'reportID': reportID,
-        'description': description,
-        'status': status,
-        'images': images,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      return data['diagnosticID'];
-    } else {
-      throw Exception('Failed to post diagnostic: ${response.reasonPhrase}');
     }
   }
 }

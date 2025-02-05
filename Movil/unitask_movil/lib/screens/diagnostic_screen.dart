@@ -51,10 +51,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           status: _statusOptions[_status]!,
           images: null, // Aquí se envía null para las imágenes
         );
-        await ApiService().postMaterials(
-          diagnosticID: diagnosticID,
-          materials: _materials,
-        );
+
+        if (_materials.isNotEmpty) {
+          await ApiService().postMaterials(
+            diagnosticID: diagnosticID,
+            materials: _materials,
+          );
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Diagnóstico enviado con éxito')),
         );

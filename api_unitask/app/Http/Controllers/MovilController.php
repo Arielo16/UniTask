@@ -61,7 +61,11 @@ class MovilController extends Controller
 
     public function getReportByFolio(Request $request)
     {
-        $folio = $request->query('folio');
+        $validatedData = $request->validate([
+            'folio' => 'required|string',
+        ]);
+
+        $folio = $validatedData['folio'];
 
         $report = DB::table('reports')
             ->join('buildings', 'reports.buildingID', '=', 'buildings.buildingID')
@@ -152,27 +156,39 @@ class MovilController extends Controller
             'description' => 'required|string',
             'images' => 'nullable|string',
             'status' => 'required|string',
+            'materials' => 'nullable|array',
+            'materials.*.name' => 'required_with:materials|string',
+            'materials.*.supplier' => 'required_with:materials|string',
+            'materials.*.quantity' => 'required_with:materials|integer',
+            'materials.*.price' => 'required_with:materials|numeric',
         ]);
 
-        try {
-            DB::beginTransaction();
+        $diagnosticID = DB::table('diagnostics')->insertGetId([
+            'reportID' => $validatedData['reportID'],
+            'description' => $validatedData['description'],
+            'images' => $validatedData['images'],
+            'status' => $validatedData['status'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-            $diagnosticID = DB::table('diagnostics')->insertGetId([
-                'reportID' => $validatedData['reportID'],
-                'description' => $validatedData['description'],
-                'images' => $validatedData['images'],
-                'status' => $validatedData['status'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            DB::commit();
-
-            return response()->json(['diagnosticID' => $diagnosticID], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Failed to create diagnostic', 'message' => $e->getMessage()], 500);
+        if (isset($validatedData['materials'])) {
+            $materials = [];
+            foreach ($validatedData['materials'] as $materialData) {
+                $materials[] = [
+                    'name' => $materialData['name'],
+                    'supplier' => $materialData['supplier'],
+                    'quantity' => $materialData['quantity'],
+                    'price' => $materialData['price'],
+                    'diagnosticID' => $diagnosticID,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            DB::table('materials')->insert($materials);
         }
+
+        return response()->json(['diagnosticID' => $diagnosticID], 201);
     }
 
     public function updateDiagnosticStatus(Request $request)
@@ -200,30 +216,22 @@ class MovilController extends Controller
             'materials.*.diagnosticID' => 'required|integer',
         ]);
 
-        try {
-            DB::beginTransaction();
-
-            $materials = [];
-            foreach ($validatedData['materials'] as $materialData) {
-                $materials[] = [
-                    'name' => $materialData['name'],
-                    'supplier' => $materialData['supplier'],
-                    'quantity' => $materialData['quantity'],
-                    'price' => $materialData['price'],
-                    'diagnosticID' => $materialData['diagnosticID'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-            DB::table('materials')->insert($materials);
-
-            DB::commit();
-
-            return response()->json(['message' => 'Materials added successfully'], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Failed to add materials', 'message' => $e->getMessage()], 500);
+        $materials = [];
+        foreach ($validatedData['materials'] as $materialData) {
+            $materials[] = [
+                'name' => $materialData['name'],
+                'supplier' => $materialData['supplier'],
+                'quantity' => $materialData['quantity'],
+                'price' => $materialData['price'],
+                'diagnosticID' => $materialData['diagnosticID'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+
+        DB::table('materials')->insert($materials);
+
+        return response()->json(['message' => 'Materials added successfully'], 201);
     }
 
     public function getMaterialsByDiagnostic($diagnosticID)
