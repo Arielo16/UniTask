@@ -91,9 +91,9 @@ Route::post('/postdiagnostic', [MovilController::class, 'postDiagnostic']);
 Route::put('/updatediagnosticstatus', [MovilController::class, 'updateDiagnosticStatus']);
 Route::get('/getreportbyfolio', [MovilController::class, 'getReportByFolio']);
 Route::post('/postmaterials', [MovilController::class, 'postMaterials']);
-<<<<<<< Updated upstream
-Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 'getMaterialsByDiagnostic']);
-=======
+
 Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 'getMaterialsByDiagnostic']);
 
->>>>>>> Stashed changes
+Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 'getMaterialsByDiagnostic']);
+
+
