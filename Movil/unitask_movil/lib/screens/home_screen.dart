@@ -16,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Report>> futureReports;
   late Future<List<Diagnostic>> futureDiagnostics;
+  late Future<List<Diagnostic>>
+      futureHistoryDiagnostics; // Add future for history diagnostics
   final TextEditingController _searchController = TextEditingController();
   int _selectedIndex = 0;
   String selectedStatus = 'EnProceso'; // Change default status to 'EnProceso'
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadReports();
     _loadDiagnostics();
+    _loadHistoryDiagnostics(); // Load history diagnostics separately
   }
 
   void _loadReports() {
@@ -40,9 +43,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _loadHistoryDiagnostics() {
+    setState(() {
+      futureHistoryDiagnostics =
+          ApiService().fetchDiagnosticsByStatus(selectedStatus);
+    });
+  }
+
   void _searchReport() async {
     try {
-      final report = await ApiService().fetchReportByFolio(_searchController.text);
+      final report =
+          await ApiService().fetchReportByFolio(_searchController.text);
       setState(() {
         searchedReports = [report];
       });
@@ -79,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
+        title: Text(titles[_selectedIndex],
+            style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF00664F),
         elevation: 0,
         actions: [
@@ -88,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               _loadReports();
               _loadDiagnostics();
+              _loadHistoryDiagnostics();
             },
           ),
         ],
@@ -130,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    prefixIcon: const Icon(Icons.search, color: Color(0xFF00664F)),
+                    prefixIcon:
+                        const Icon(Icons.search, color: Color(0xFF00664F)),
                   ),
                 ),
               ),
@@ -187,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else {
                     return GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
@@ -255,7 +270,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+                          builder: (context) =>
+                              DiagnosticDetailScreen(diagnostic: diagnostic),
                         ),
                       );
                     },
@@ -311,10 +327,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedStatus = newValue!;
-                      _loadDiagnostics();
+                      _loadHistoryDiagnostics(); // Load history diagnostics on status change
                     });
                   },
-                  items: <String>['EnProceso'] // Only 'EnProceso' option
+                  items: <String>[
+                    'Completado',
+                    'EnProceso',
+                    'Enviado'
+                  ] // Include all options
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -325,7 +345,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.search, color: Color(0xFF00664F)),
-                onPressed: _loadDiagnostics,
+                onPressed:
+                    _loadHistoryDiagnostics, // Load history diagnostics on search
               ),
             ],
           ),
@@ -333,10 +354,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              _loadDiagnostics();
+              _loadHistoryDiagnostics();
             },
             child: FutureBuilder<List<Diagnostic>>(
-              future: futureDiagnostics,
+              future: futureHistoryDiagnostics, // Use futureHistoryDiagnostics
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -357,7 +378,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
@@ -377,7 +399,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+                                builder: (context) => DiagnosticDetailScreen(
+                                    diagnostic: diagnostic),
                               ),
                             );
                           },
