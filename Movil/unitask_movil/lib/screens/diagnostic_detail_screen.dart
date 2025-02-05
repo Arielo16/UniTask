@@ -10,8 +10,9 @@ class DiagnosticDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles del Diagnóstico'),
-        backgroundColor: Colors.green[700],
+        title: const Text('Detalles del Diagnóstico',
+            style: TextStyle(color: Colors.white)), // Set text color to white
+        backgroundColor: const Color(0xFF00664F), // Set AppBar color
         elevation: 4,
       ),
       body: Padding(
@@ -33,8 +34,10 @@ class DiagnosticDetailScreen extends StatelessWidget {
                       _buildDetailRow('Folio', diagnostic.reportFolio),
                       _buildDetailRow('Descripción', diagnostic.description),
                       _buildDetailRow('Estado', diagnostic.status),
-                      _buildDetailRow('Creado en', diagnostic.createdAt.toString()),
-                      if (diagnostic.images != null && diagnostic.images!.isNotEmpty)
+                      _buildDetailRow(
+                          'Creado en', diagnostic.createdAt.toString()),
+                      if (diagnostic.images != null &&
+                          diagnostic.images!.isNotEmpty)
                         _buildDetailRow('Imágenes', diagnostic.images!),
                     ],
                   ),
@@ -57,7 +60,7 @@ class DiagnosticDetailScreen extends StatelessWidget {
             '$title: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.green[700],
+              color: const Color(0xFF00664F), // Set text color
               fontSize: 16,
             ),
           ),
