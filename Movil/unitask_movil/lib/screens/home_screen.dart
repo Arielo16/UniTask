@@ -47,8 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
         searchedReports = [report];
       });
     } catch (e) {
+      setState(() {
+        searchedReports = [];
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text('No encontrado')),
       );
     }
   }
@@ -147,6 +150,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 final report = searchedReports[index];
                 return ReportCard(report: report);
               },
+            ),
+          )
+        else if (_searchController.text.isNotEmpty)
+          const Center(
+            child: Text(
+              'No encontrado',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
           )
         else
