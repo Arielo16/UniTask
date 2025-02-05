@@ -37,7 +37,8 @@ class ApiService {
       List<dynamic> body = json.decode(response.body);
       List<Report> reports = body.map((dynamic item) {
         var report = Report.fromJson(item);
-        report.buildingName = item['building']['key']; // Use 'key' instead of 'name'
+        report.buildingName =
+            item['building']['key']; // Use 'key' instead of 'name'
         report.roomName = item['room']['name'];
         report.categoryName = item['category']['name'];
         report.goodName = item['goods']['name'];

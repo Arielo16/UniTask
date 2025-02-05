@@ -234,11 +234,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   ),
                 );
               }),
-              ElevatedButton(
-                onPressed: _addMaterial,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
-                child: Text('Agregar Material', style: TextStyle(color: Colors.white)),
-              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitDiagnostic,
