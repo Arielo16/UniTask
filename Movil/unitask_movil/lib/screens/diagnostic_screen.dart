@@ -87,7 +87,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Descripción',
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -109,7 +109,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 value: _status,
                 decoration: InputDecoration(
                   labelText: 'Estado',
-                  labelStyle: TextStyle(color: Colors.white),
+                  labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
