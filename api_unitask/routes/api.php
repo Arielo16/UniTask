@@ -96,4 +96,3 @@ Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 
 
 Route::get('/getmaterialsbydiagnostic/{diagnosticID}', [MovilController::class, 'getMaterialsByDiagnostic']);
 
-
