@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Diagnostic>> futureDiagnostics;
   final TextEditingController _searchController = TextEditingController();
   int _selectedIndex = 0;
-  String selectedStatus = 'Completado';
+  String selectedStatus = 'EnProceso'; // Change default status to 'EnProceso'
   List<Report> searchedReports = [];
 
   @override
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadDiagnostics();
                     });
                   },
-                  items: <String>['Completado', 'EnProceso', 'Enviado']
+                  items: <String>['EnProceso'] // Only 'EnProceso' option
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
