@@ -42,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _searchReport() async {
     try {
-      final report =
-          await ApiService().fetchReportByFolio(_searchController.text);
+      final report = await ApiService().fetchReportByFolio(_searchController.text);
       setState(() {
         searchedReports = [report];
       });
@@ -77,9 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedIndex],
-            style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        title: Text(titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF00664F),
         elevation: 0,
         actions: [
           IconButton(
@@ -129,8 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    prefixIcon:
-                        const Icon(Icons.search, color: Color(0xFF00664F)),
+                    prefixIcon: const Icon(Icons.search, color: Color(0xFF00664F)),
                   ),
                 ),
               ),
@@ -180,8 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else {
                     return GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
@@ -249,8 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              DiagnosticDetailScreen(diagnostic: diagnostic),
+                          builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
                         ),
                       );
                     },
@@ -309,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadDiagnostics();
                     });
                   },
-                  items: <String>['Completado', 'EnProceso', 'Pendiente']
+                  items: <String>['Completado', 'EnProceso', 'Enviado']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -352,8 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
@@ -373,8 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DiagnosticDetailScreen(
-                                    diagnostic: diagnostic),
+                                builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
                               ),
                             );
                           },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../models/Reports.dart';
 import '../services/api_service.dart';
 
@@ -23,7 +24,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     'Completado': 'Completado',
   };
 
-  // Función para agregar un nuevo material a la lista
   void _addMaterial() {
     setState(() {
       _materials.add({
@@ -35,19 +35,16 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     });
   }
 
-  // Función para eliminar un material de la lista
   void _removeMaterial(int index) {
     setState(() {
       _materials.removeAt(index);
     });
   }
 
-  // Función para enviar el formulario de diagnóstico
   void _submitDiagnostic() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        // Llamar a la API para enviar el diagnóstico
         final diagnosticID = await ApiService().postDiagnostic(
           reportID: widget.report.reportID,
           description: _description,
@@ -55,7 +52,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           images: null, // Aquí se envía null para las imágenes
         );
 
-        // Si hay materiales, enviarlos también
         if (_materials.isNotEmpty) {
           await ApiService().postMaterials(
             diagnosticID: diagnosticID,
@@ -63,13 +59,11 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           );
         }
 
-        // Mostrar un mensaje de éxito y navegar hacia atrás
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Diagnóstico enviado con éxito')),
         );
         Navigator.pop(context);
       } catch (e) {
-        // Mostrar un mensaje de error si la llamada a la API falla
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
@@ -81,8 +75,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Diagnóstico',
-            style: TextStyle(color: Colors.white)), // Set text color to white
+        title: Text('Diagnóstico'),
         backgroundColor: const Color(0xFF00664F),
       ),
       body: Padding(
@@ -91,7 +84,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // Campo de texto para la descripción del diagnóstico
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Descripción',
@@ -99,8 +91,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon:
-                      const Icon(Icons.description, color: Color(0xFF00664F)),
+                  prefixIcon: const Icon(Icons.description, color: Color(0xFF00664F)),
                 ),
                 onSaved: (value) {
                   _description = value!;
@@ -113,7 +104,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              // Dropdown para seleccionar el estado del diagnóstico
               DropdownButtonFormField<String>(
                 value: _status,
                 decoration: InputDecoration(
@@ -122,8 +112,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon:
-                      const Icon(Icons.assignment, color: Color(0xFF00664F)),
+                  prefixIcon: const Icon(Icons.assignment, color: Color(0xFF00664F)),
                 ),
                 items: _statusOptions.keys
                     .map((status) => DropdownMenuItem(
@@ -138,14 +127,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              // Sección para agregar materiales
-              Text('Materiales',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+              Text('Materiales', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
               const SizedBox(height: 8),
-              // Lista de materiales
               ..._materials.asMap().entries.map((entry) {
                 int index = entry.key;
                 Map<String, dynamic> material = entry.value;
@@ -159,7 +142,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        // Campo de texto para el nombre del material
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Nombre del Material',
@@ -167,8 +149,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.build,
-                                color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.build, color: Color(0xFF00664F)),
                           ),
                           onSaved: (value) {
                             material['name'] = value!;
@@ -181,7 +162,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        // Campo de texto para el proveedor del material
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Proveedor',
@@ -189,8 +169,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.store,
-                                color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.store, color: Color(0xFF00664F)),
                           ),
                           onSaved: (value) {
                             material['supplier'] = value!;
@@ -203,7 +182,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        // Campo de texto para la cantidad del material
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Cantidad',
@@ -211,8 +189,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.format_list_numbered,
-                                color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.format_list_numbered, color: Color(0xFF00664F)),
                           ),
                           keyboardType: TextInputType.number,
                           onSaved: (value) {
@@ -226,7 +203,6 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        // Campo de texto para el precio del material
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Precio',
@@ -234,11 +210,9 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.attach_money,
-                                color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.attach_money, color: Color(0xFF00664F)),
                           ),
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           onSaved: (value) {
                             material['price'] = double.parse(value!);
                           },
@@ -250,35 +224,26 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        // Botón para eliminar el material
                         ElevatedButton(
                           onPressed: () => _removeMaterial(index),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red),
-                          child: Text('Eliminar Material',
-                              style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          child: Text('Eliminar Material', style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
                   ),
                 );
               }),
-              // Botón para agregar un nuevo material
               ElevatedButton(
                 onPressed: _addMaterial,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00664F)),
-                child: Text('Agregar Material',
-                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+                child: Text('Agregar Material', style: TextStyle(color: Colors.white)),
               ),
               const SizedBox(height: 16),
-              // Botón para enviar el formulario de diagnóstico
               ElevatedButton(
                 onPressed: _submitDiagnostic,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00664F)),
-                child: Text('Enviar Diagnóstico',
-                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
+                child: Text('Enviar Diagnóstico', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
