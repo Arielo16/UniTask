@@ -75,8 +75,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Diagnóstico'),
-        backgroundColor: const Color(0xFF00664F),
+        title: const Text('Diagnóstico', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF00664F), // Set AppBar color
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -91,7 +91,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon: const Icon(Icons.description, color: Color(0xFF00664F)),
+                  prefixIcon:
+                      const Icon(Icons.description, color: Color(0xFF00664F)),
                 ),
                 onSaved: (value) {
                   _description = value!;
@@ -112,7 +113,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon: const Icon(Icons.assignment, color: Color(0xFF00664F)),
+                  prefixIcon:
+                      const Icon(Icons.assignment, color: Color(0xFF00664F)),
                 ),
                 items: _statusOptions.keys
                     .map((status) => DropdownMenuItem(
@@ -127,7 +129,11 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Text('Materiales', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('Materiales',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
               const SizedBox(height: 8),
               ..._materials.asMap().entries.map((entry) {
                 int index = entry.key;
@@ -149,7 +155,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.build, color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.build,
+                                color: Color(0xFF00664F)),
                           ),
                           onSaved: (value) {
                             material['name'] = value!;
@@ -169,7 +176,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.store, color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.store,
+                                color: Color(0xFF00664F)),
                           ),
                           onSaved: (value) {
                             material['supplier'] = value!;
@@ -189,7 +197,8 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.format_list_numbered, color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.format_list_numbered,
+                                color: Color(0xFF00664F)),
                           ),
                           keyboardType: TextInputType.number,
                           onSaved: (value) {
@@ -210,9 +219,11 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.attach_money, color: Color(0xFF00664F)),
+                            prefixIcon: const Icon(Icons.attach_money,
+                                color: Color(0xFF00664F)),
                           ),
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                           onSaved: (value) {
                             material['price'] = double.parse(value!);
                           },
@@ -226,8 +237,10 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () => _removeMaterial(index),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                          child: Text('Eliminar Material', style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          child: Text('Eliminar Material',
+                              style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -237,8 +250,10 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitDiagnostic,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00664F)),
-                child: Text('Enviar Diagnóstico', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00664F)),
+                child: Text('Enviar Diagnóstico',
+                    style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
