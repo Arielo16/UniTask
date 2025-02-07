@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/Diagnostic.dart';
 import '../services/api_service.dart';
 import 'diagnostic_detail_screen.dart';
+import '../theme/colors.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -32,7 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       appBar: AppBar(
         title: const Text('Historial de Diagnósticos',
             style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
       ),
       body: Column(
         children: [
@@ -59,7 +60,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.search, color: Color(0xFF00664F)),
+                  icon: const Icon(Icons.search, color: AppColors.primaryColor),
                   onPressed: _loadDiagnostics,
                 ),
               ],
@@ -128,7 +129,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
-                                      color: Color(0xFF00664F),
+                                      color: AppColors.primaryColor,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -142,7 +143,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   const Spacer(),
                                   Icon(
                                     Icons.arrow_forward,
-                                    color: const Color(0xFF4DC591),
+                                    color: AppColors.secondaryColor,
                                   ),
                                 ],
                               ),

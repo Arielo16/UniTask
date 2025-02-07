@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/Diagnostic.dart';
+import '../theme/colors.dart';
 
 class DiagnosticDetailScreen extends StatelessWidget {
   final Diagnostic diagnostic;
@@ -12,7 +13,7 @@ class DiagnosticDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Detalles del Diagnóstico',
             style: TextStyle(color: Colors.white)), // Set text color to white
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
         elevation: 4,
       ),
       body: Padding(
@@ -60,7 +61,7 @@ class DiagnosticDetailScreen extends StatelessWidget {
             '$title: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF00664F), // Set text color
+              color: AppColors.primaryColor, // Set text color
               fontSize: 16,
             ),
           ),
