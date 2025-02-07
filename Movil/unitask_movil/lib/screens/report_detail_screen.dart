@@ -4,6 +4,7 @@ import '../models/Reports.dart';
 import 'diagnostic_screen.dart';
 import 'dart:convert';
 import '../widgets/card_detalles.dart';
+import '../theme/colors.dart';
 
 class ReportDetailScreen extends StatelessWidget {
   final Report report;
@@ -16,7 +17,7 @@ class ReportDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Detalles del Reporte',
             style: TextStyle(color: Colors.white)), // Set text color to white
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
         elevation: 4,
       ),
       body: Padding(
@@ -41,7 +42,7 @@ class ReportDetailScreen extends StatelessWidget {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        const Color(0xFF00664F), // Set button color
+                        AppColors.primaryColor, // Set button color
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 14),
                     textStyle: const TextStyle(
@@ -78,7 +79,7 @@ class ReportDetailScreen extends StatelessWidget {
             '$title: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF00664F), // Set text color
+              color: AppColors.primaryColor, // Set text color
               fontSize: 16,
             ),
           ),
@@ -179,7 +180,7 @@ class DetallesCard extends StatelessWidget {
             '$title: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF00664F), // Set text color
+              color: AppColors.primaryColor, // Set text color
               fontSize: 16,
             ),
           ),

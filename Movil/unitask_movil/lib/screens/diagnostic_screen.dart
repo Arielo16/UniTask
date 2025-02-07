@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import '../models/Reports.dart';
 import '../services/api_service.dart';
+import '../theme/colors.dart';
 
 class DiagnosticScreen extends StatefulWidget {
   final Report report;
@@ -76,7 +76,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Diagnóstico', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -92,7 +92,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   prefixIcon:
-                      const Icon(Icons.description, color: Color(0xFF00664F)),
+                      const Icon(Icons.description, color: AppColors.primaryColor),
                 ),
                 onSaved: (value) {
                   _description = value!;
@@ -114,7 +114,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   prefixIcon:
-                      const Icon(Icons.assignment, color: Color(0xFF00664F)),
+                      const Icon(Icons.assignment, color: AppColors.primaryColor),
                 ),
                 items: _statusOptions.keys
                     .map((status) => DropdownMenuItem(
@@ -156,7 +156,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             prefixIcon: const Icon(Icons.build,
-                                color: Color(0xFF00664F)),
+                                color: AppColors.primaryColor),
                           ),
                           onSaved: (value) {
                             material['name'] = value!;
@@ -177,7 +177,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             prefixIcon: const Icon(Icons.store,
-                                color: Color(0xFF00664F)),
+                                color: AppColors.primaryColor),
                           ),
                           onSaved: (value) {
                             material['supplier'] = value!;
@@ -198,7 +198,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             prefixIcon: const Icon(Icons.format_list_numbered,
-                                color: Color(0xFF00664F)),
+                                color: AppColors.primaryColor),
                           ),
                           keyboardType: TextInputType.number,
                           onSaved: (value) {
@@ -220,7 +220,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             prefixIcon: const Icon(Icons.attach_money,
-                                color: Color(0xFF00664F)),
+                                color: AppColors.primaryColor),
                           ),
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),
@@ -251,7 +251,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               ElevatedButton(
                 onPressed: _submitDiagnostic,
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00664F)),
+                    backgroundColor: AppColors.primaryColor),
                 child: Text('Enviar Diagnóstico',
                     style: TextStyle(color: Colors.white)),
               ),

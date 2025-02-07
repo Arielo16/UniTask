@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import '../theme/colors.dart';
 import '../widgets/card_inicio_sesion.dart';
 import 'home_screen.dart';
 
@@ -65,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
       ),
       body: Container(
         color: Colors.white,

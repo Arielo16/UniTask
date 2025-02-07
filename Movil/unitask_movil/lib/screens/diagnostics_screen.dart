@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/Diagnostic.dart';
 import '../services/api_service.dart';
 import 'diagnostic_detail_screen.dart';
+import '../theme/colors.dart';
 
 class DiagnosticsScreen extends StatefulWidget {
   const DiagnosticsScreen({super.key});
@@ -31,7 +32,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       appBar: AppBar(
         title: const Text('Diagnósticos en Proceso',
             style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00664F), // Set AppBar color
+        backgroundColor: AppColors.primaryColor, // Set AppBar color
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -94,7 +95,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
-                                color: Color(0xFF00664F),
+                                color: AppColors.primaryColor,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -108,7 +109,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                             const Spacer(),
                             Icon(
                               Icons.arrow_forward,
-                              color: const Color(0xFF4DC591),
+                              color: AppColors.secondaryColor,
                             ),
                           ],
                         ),
