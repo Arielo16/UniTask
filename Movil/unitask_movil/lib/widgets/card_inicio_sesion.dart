@@ -95,7 +95,7 @@ class CardInicioSesion extends StatelessWidget {
                         activeColor: const Color(0xFF00664F),
                       ),
                       const Text(
-                        'Recordarme',
+                        'Mostrar contraseña',
                         style: TextStyle(color: Colors.black54),
                       ),
                     ],
