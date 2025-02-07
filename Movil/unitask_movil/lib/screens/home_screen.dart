@@ -4,8 +4,6 @@ import '../models/Reports.dart';
 import '../models/Diagnostic.dart';
 import '../widgets/report_card.dart';
 import 'diagnostic_detail_screen.dart';
-import '../theme/colors.dart';
-import 'report_detail_screen.dart'; // Importa ReportDetailScreen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -93,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(titles[_selectedIndex],
             style: const TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primaryColor, // Set AppBar color
+        backgroundColor: const Color(0xFF00664F),
         elevation: 0,
         actions: [
           IconButton(
@@ -123,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.primaryColor, // Set selected item color
+        selectedItemColor: Colors.green[800],
         onTap: _onItemTapped,
       ),
     );
@@ -145,12 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     prefixIcon:
-                        const Icon(Icons.search, color: AppColors.primaryColor),
+                        const Icon(Icons.search, color: Color(0xFF00664F)),
                   ),
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.search, color: AppColors.primaryColor),
+                icon: const Icon(Icons.search, color: Color(0xFF00664F)),
                 onPressed: _searchReport,
               ),
             ],
@@ -163,48 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: searchedReports.length,
               itemBuilder: (context, index) {
                 final report = searchedReports[index];
-                return Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    title: Text(report.folio,
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            'Edificio: ${report.buildingName ?? 'No disponible'}'),
-                        Text(report.description),
-                      ],
-                    ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          report.priority,
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(Icons.arrow_forward,
-                            color: AppColors.primaryColor),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ReportDetailScreen(report: report),
-                        ),
-                      );
-                    },
-                  ),
-                );
+                return ReportCard(report: report);
               },
             ),
           )
@@ -241,53 +198,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   } else {
-                    return ListView.builder(
+                    return GridView.builder(
                       padding: const EdgeInsets.all(16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.8,
+                      ),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         final report = snapshot.data![index];
-                        return Card(
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListTile(
-                            title: Text(report.folio,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    'Edificio: ${report.buildingName ?? 'No disponible'}'),
-                                Text(report.description),
-                              ],
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  report.priority,
-                                  style: TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Icon(Icons.arrow_forward,
-                                    color: AppColors.primaryColor),
-                              ],
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ReportDetailScreen(report: report),
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                        return ReportCard(report: report);
                       },
                     );
                   }
@@ -324,23 +247,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           } else {
-            return ListView.builder(
+            return GridView.builder(
               padding: const EdgeInsets.all(16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.8,
+              ),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final diagnostic = snapshot.data![index];
                 return Card(
                   elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: ListTile(
-                    title: Text(diagnostic.reportFolio,
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(diagnostic.description),
-                    trailing: Icon(Icons.arrow_forward,
-                        color: AppColors.primaryColor),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(15),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -350,6 +274,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Folio: ${diagnostic.reportFolio}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Color(0xFF00664F),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Descripción: ${diagnostic.description}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: const Color(0xFF4DC591),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
@@ -390,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.search, color: AppColors.primaryColor),
+                icon: const Icon(Icons.search, color: Color(0xFF00664F)),
                 onPressed:
                     _loadHistoryDiagnostics, // Load history diagnostics on search
               ),
@@ -422,23 +375,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 } else {
-                  return ListView.builder(
+                  return GridView.builder(
                     padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.8,
+                    ),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       final diagnostic = snapshot.data![index];
                       return Card(
                         elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        child: ListTile(
-                          title: Text(diagnostic.reportFolio,
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(diagnostic.description),
-                          trailing: Icon(Icons.arrow_forward,
-                              color: AppColors.primaryColor),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(15),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -448,6 +403,35 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Folio: ${diagnostic.reportFolio}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Color(0xFF00664F),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Descripción: ${diagnostic.description}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: const Color(0xFF4DC591),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     },

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../theme/colors.dart';
 import '../widgets/card_inicio_sesion.dart';
 import 'home_screen.dart';
+import '../theme/colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
   bool _isLoading = false;
   String errorMessage = '';
+  bool _obscureText = true;
 
   @override
   void dispose() {
@@ -62,6 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           formKey: _formKey,
                           emailController: _emailController,
                           passwordController: _passwordController,
+                          obscureText: _obscureText,
+                          onTogglePasswordVisibility: _togglePasswordVisibility,
                           rememberMe: _rememberMe,
                           onRememberMeChanged: (value) {
                             setState(() {
