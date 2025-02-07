@@ -41,8 +41,7 @@ class ReportDetailScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        AppColors.primaryColor, // Set button color
+                    backgroundColor: AppColors.primaryColor, // Set button color
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 14),
                     textStyle: const TextStyle(
