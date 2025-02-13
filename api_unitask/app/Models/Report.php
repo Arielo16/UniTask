@@ -13,14 +13,13 @@ class Report extends Model
     protected $table = 'reports';
 
     // Llave primaria
-    protected $primaryKey = 'folio';
+    protected $primaryKey = 'reportID'; 
 
     // Desactivamos el incremento automático porque usamos un string como llave primaria
-    public $incrementing = false;
+    public $incrementing = true; 
 
     // Tipo de la llave primaria
-    protected $keyType = 'string';
-
+    protected $keyType = 'int'; 
     // Campos asignables
     protected $fillable = [
         'folio',
