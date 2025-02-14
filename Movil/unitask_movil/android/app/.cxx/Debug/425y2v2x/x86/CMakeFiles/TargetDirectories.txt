@@ -1,0 +1,2 @@
+C:/Users/sanch/Documents/ESCUELA/PROYECTO_UNI/Movil/unitask_movil/android/app/.cxx/Debug/425y2v2x/x86/CMakeFiles/edit_cache.dir
+C:/Users/sanch/Documents/ESCUELA/PROYECTO_UNI/Movil/unitask_movil/android/app/.cxx/Debug/425y2v2x/x86/CMakeFiles/rebuild_cache.dir

@@ -92,7 +92,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   prefixIcon:
-                      const Icon(Icons.description, color: AppColors.primaryColor),
+                      Icon(Icons.description, color: AppColors.primaryColor),
                 ),
                 onSaved: (value) {
                   _description = value!;
@@ -114,7 +114,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   prefixIcon:
-                      const Icon(Icons.assignment, color: AppColors.primaryColor),
+                      Icon(Icons.assignment, color: AppColors.primaryColor),
                 ),
                 items: _statusOptions.keys
                     .map((status) => DropdownMenuItem(
@@ -155,7 +155,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.build,
+                            prefixIcon: Icon(Icons.build,
                                 color: AppColors.primaryColor),
                           ),
                           onSaved: (value) {
@@ -176,7 +176,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.store,
+                            prefixIcon: Icon(Icons.store,
                                 color: AppColors.primaryColor),
                           ),
                           onSaved: (value) {
@@ -197,7 +197,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.format_list_numbered,
+                            prefixIcon: Icon(Icons.format_list_numbered,
                                 color: AppColors.primaryColor),
                           ),
                           keyboardType: TextInputType.number,
@@ -219,7 +219,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            prefixIcon: const Icon(Icons.attach_money,
+                            prefixIcon: Icon(Icons.attach_money,
                                 color: AppColors.primaryColor),
                           ),
                           keyboardType:

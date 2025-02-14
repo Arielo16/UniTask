@@ -4,8 +4,10 @@ class CardInicioSesion extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
+  final bool obscureText;
+  final VoidCallback onTogglePasswordVisibility;
   final bool rememberMe;
-  final Function(bool?) onRememberMeChanged;
+  final ValueChanged<bool?> onRememberMeChanged;
   final VoidCallback onLogin;
 
   const CardInicioSesion({
@@ -13,6 +15,8 @@ class CardInicioSesion extends StatelessWidget {
     required this.formKey,
     required this.emailController,
     required this.passwordController,
+    required this.obscureText,
+    required this.onTogglePasswordVisibility,
     required this.rememberMe,
     required this.onRememberMeChanged,
     required this.onLogin,
@@ -67,6 +71,7 @@ class CardInicioSesion extends StatelessWidget {
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: passwordController,
+                    obscureText: obscureText,
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
                       border: OutlineInputBorder(
@@ -74,8 +79,13 @@ class CardInicioSesion extends StatelessWidget {
                       ),
                       prefixIcon:
                           const Icon(Icons.lock, color: Color(0xFF00664F)),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: onTogglePasswordVisibility,
+                      ),
                     ),
-                    obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Por favor ingrese su contraseña';

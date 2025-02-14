@@ -60,7 +60,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.search, color: AppColors.primaryColor),
+                  icon: Icon(Icons.search, color: AppColors.primaryColor),
                   onPressed: _loadDiagnostics,
                 ),
               ],
@@ -126,7 +126,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 children: [
                                   Text(
                                     'Folio: ${diagnostic.reportFolio}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       color: AppColors.primaryColor,

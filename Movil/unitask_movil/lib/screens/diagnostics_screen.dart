@@ -92,7 +92,8 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                           children: [
                             Text(
                               'Folio: ${diagnostic.reportFolio}',
-                              style: const TextStyle(
+                              style: TextStyle(
+                                // Elimina 'const' aquí
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 color: AppColors.primaryColor,
