@@ -96,20 +96,6 @@ class CardInicioSesion extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: rememberMe,
-                        onChanged: onRememberMeChanged,
-                        activeColor: const Color(0xFF00664F),
-                      ),
-                      const Text(
-                        'Mostrar contraseña',
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: onLogin,
