@@ -76,10 +76,10 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Diagnóstico', style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primaryColor, // Set AppBar color
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -87,12 +87,11 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Descripción',
-                  labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+                  labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon:
-                      Icon(Icons.description, color: AppColors.primaryColor),
+                  prefixIcon: Icon(Icons.description, color: AppColors.primaryColor),
                 ),
                 onSaved: (value) {
                   _description = value!;
@@ -109,12 +108,11 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 value: _status,
                 decoration: InputDecoration(
                   labelText: 'Estado',
-                  labelStyle: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+                  labelStyle: const TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  prefixIcon:
-                      Icon(Icons.assignment, color: AppColors.primaryColor),
+                  prefixIcon: Icon(Icons.assignment, color: AppColors.primaryColor),
                 ),
                 items: _statusOptions.keys
                     .map((status) => DropdownMenuItem(
@@ -133,7 +131,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white)),
+                      color: Colors.black)),
               const SizedBox(height: 8),
               ..._materials.asMap().entries.map((entry) {
                 int index = entry.key;
@@ -151,7 +149,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Nombre del Material',
-                            labelStyle: TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -172,7 +170,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Proveedor',
-                            labelStyle: TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -193,7 +191,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Cantidad',
-                            labelStyle: TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -215,7 +213,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Precio',
-                            labelStyle: TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -239,7 +237,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                           onPressed: () => _removeMaterial(index),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red),
-                          child: Text('Eliminar Material',
+                          child: const Text('Eliminar Material',
                               style: TextStyle(color: Colors.white)),
                         ),
                       ],
@@ -252,7 +250,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                 onPressed: _submitDiagnostic,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor),
-                child: Text('Enviar Diagnóstico',
+                child: const Text('Enviar Diagnóstico',
                     style: TextStyle(color: Colors.white)),
               ),
             ],

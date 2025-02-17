@@ -32,7 +32,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       appBar: AppBar(
         title: const Text('Diagnósticos en Proceso',
             style: TextStyle(color: Colors.white)),
-        backgroundColor: AppColors.primaryColor, // Set AppBar color
+        backgroundColor: AppColors.primaryColor,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -58,64 +58,48 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                 ),
               );
             } else {
-              return GridView.builder(
+              return ListView.builder(
                 padding: const EdgeInsets.all(16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.8,
-                ),
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   final diagnostic = snapshot.data![index];
-                  return Card(
-                    elevation: 4,
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    tileColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(15),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                DiagnosticDetailScreen(diagnostic: diagnostic),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Folio: ${diagnostic.reportFolio}',
-                              style: TextStyle(
-                                // Elimina 'const' aquí
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Descripción: ${diagnostic.description}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            const Spacer(),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: AppColors.secondaryColor,
-                            ),
-                          ],
-                        ),
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors.primaryColor,
+                      child: Text(
+                        diagnostic.reportFolio.substring(0, 2).toUpperCase(),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
+                    title: Text(
+                      'Folio: ${diagnostic.reportFolio}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF00664F),
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Descripción: ${diagnostic.description}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+                        ),
+                      );
+                    },
                   );
                 },
               );

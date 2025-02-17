@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor, // Set AppBar color
+        backgroundColor: AppColors.primaryColor,
       ),
       body: Container(
         color: Colors.white,
@@ -85,8 +85,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
-                    'lib/assets/UTM_Logo.png', // Ruta de tu logo
-                    height: 200, // Increased height
+                    'lib/assets/UTM_Logo.png',
+                    height: 200,
                   ),
                   const SizedBox(height: 20),
                   _isLoading
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         errorMessage,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                 ],

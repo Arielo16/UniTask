@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/colors.dart';
 
 class CardInicioSesion extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -28,9 +29,9 @@ class CardInicioSesion extends StatelessWidget {
       child: SizedBox(
         width: 370,
         child: Card(
-          elevation: 5,
+          elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -97,17 +98,30 @@ class CardInicioSesion extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: rememberMe,
+                        onChanged: onRememberMeChanged,
+                      ),
+                      const Text('Recuérdame'),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: onLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00664F),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 40,
-                        vertical: 12,
+                        vertical: 14,
                       ),
                       textStyle: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                     child: const Text('Iniciar Sesión',

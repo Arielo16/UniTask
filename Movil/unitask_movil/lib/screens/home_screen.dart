@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../models/Reports.dart';
 import '../models/Diagnostic.dart';
-import '../widgets/report_card.dart';
+import '../widgets/report_list_item.dart';
 import 'diagnostic_detail_screen.dart';
+import '../theme/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,11 +16,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Report>> futureReports;
   late Future<List<Diagnostic>> futureDiagnostics;
-  late Future<List<Diagnostic>>
-      futureHistoryDiagnostics; // Add future for history diagnostics
+  late Future<List<Diagnostic>> futureHistoryDiagnostics;
   final TextEditingController _searchController = TextEditingController();
   int _selectedIndex = 0;
-  String selectedStatus = 'EnProceso'; // Change default status to 'EnProceso'
+  String selectedStatus = 'EnProceso';
   List<Report> searchedReports = [];
 
   @override
@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadReports();
     _loadDiagnostics();
-    _loadHistoryDiagnostics(); // Load history diagnostics separately
+    _loadHistoryDiagnostics();
   }
 
   void _loadReports() {
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
         searchedReports = [];
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No encontrado')),
+        const SnackBar(content: Text('No encontrado')),
       );
     }
   }
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      searchedReports = []; // Clear the searched reports when switching tabs
+      searchedReports = [];
     });
   }
 
@@ -89,9 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedIndex],
-            style: const TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF00664F),
+        title: Text(titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.primaryColor,
         elevation: 0,
         actions: [
           IconButton(
@@ -121,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green[800],
+        selectedItemColor: AppColors.primaryColor,
         onTap: _onItemTapped,
       ),
     );
@@ -142,8 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    prefixIcon:
-                        const Icon(Icons.search, color: Color(0xFF00664F)),
+                    prefixIcon: const Icon(Icons.search, color: Color(0xFF00664F)),
                   ),
                 ),
               ),
@@ -161,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: searchedReports.length,
               itemBuilder: (context, index) {
                 final report = searchedReports[index];
-                return ReportCard(report: report);
+                return ReportListItem(report: report);
               },
             ),
           )
@@ -198,19 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   } else {
-                    return GridView.builder(
+                    return ListView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.8,
-                      ),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         final report = snapshot.data![index];
-                        return ReportCard(report: report);
+                        return ReportListItem(report: report);
                       },
                     );
                   }
@@ -247,63 +238,48 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           } else {
-            return GridView.builder(
+            return ListView.builder(
               padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.8,
-              ),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final diagnostic = snapshot.data![index];
-                return Card(
-                  elevation: 4,
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  tileColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DiagnosticDetailScreen(diagnostic: diagnostic),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Folio: ${diagnostic.reportFolio}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Color(0xFF00664F),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Descripción: ${diagnostic.description}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          const Spacer(),
-                          Icon(
-                            Icons.arrow_forward,
-                            color: const Color(0xFF4DC591),
-                          ),
-                        ],
-                      ),
+                  leading: CircleAvatar(
+                    backgroundColor: AppColors.primaryColor,
+                    child: Text(
+                      diagnostic.reportFolio.substring(0, 2).toUpperCase(),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
+                  title: Text(
+                    'Folio: ${diagnostic.reportFolio}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xFF00664F),
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Descripción: ${diagnostic.description}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+                      ),
+                    );
+                  },
                 );
               },
             );
@@ -326,14 +302,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedStatus = newValue!;
-                      _loadHistoryDiagnostics(); // Load history diagnostics on status change
+                      _loadHistoryDiagnostics();
                     });
                   },
-                  items: <String>[
-                    'Completado',
-                    'EnProceso',
-                    'Enviado'
-                  ] // Include all options
+                  items: <String>['Completado', 'EnProceso', 'Enviado']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -344,8 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.search, color: Color(0xFF00664F)),
-                onPressed:
-                    _loadHistoryDiagnostics, // Load history diagnostics on search
+                onPressed: _loadHistoryDiagnostics,
               ),
             ],
           ),
@@ -356,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _loadHistoryDiagnostics();
             },
             child: FutureBuilder<List<Diagnostic>>(
-              future: futureHistoryDiagnostics, // Use futureHistoryDiagnostics
+              future: futureHistoryDiagnostics,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -375,64 +346,48 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 } else {
-                  return GridView.builder(
+                  return ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.8,
-                    ),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       final diagnostic = snapshot.data![index];
-                      return Card(
-                        elevation: 4,
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        tileColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DiagnosticDetailScreen(
-                                    diagnostic: diagnostic),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Folio: ${diagnostic.reportFolio}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Color(0xFF00664F),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Descripción: ${diagnostic.description}',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Icon(
-                                  Icons.arrow_forward,
-                                  color: const Color(0xFF4DC591),
-                                ),
-                              ],
-                            ),
+                        leading: CircleAvatar(
+                          backgroundColor: AppColors.primaryColor,
+                          child: Text(
+                            diagnostic.reportFolio.substring(0, 2).toUpperCase(),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
+                        title: Text(
+                          'Folio: ${diagnostic.reportFolio}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Color(0xFF00664F),
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Descripción: ${diagnostic.description}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
