@@ -1,6 +1,7 @@
 // lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart'; // Importar para usar debugPrint
 import '../models/login_response.dart';
 import '../models/Reports.dart';
 import '../models/Diagnostic.dart';
@@ -76,20 +77,36 @@ class ApiService {
   }
 
   Future<Report> fetchReportByFolio(String folio) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/getreportbyfolio?folio=$folio'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
+    try {
+      debugPrint('Fetching report by folio: $folio'); // Agregar mensaje de depuración
+      final response = await http.get(
+        Uri.parse('$baseUrl/getreportbyfolio?folio=$folio'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      return Report.fromJson(data);
-    } else if (response.statusCode == 404) {
-      throw Exception('Folio no encontrado');
-    } else {
-      throw Exception('Failed to load report: ${response.reasonPhrase}');
+      debugPrint('Response status: ${response.statusCode}'); // Agregar mensaje de depuración
+      debugPrint('Response body: ${response.body}'); // Agregar mensaje de depuración
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        var report = Report.fromJson(data);
+        report.buildingName = data['building_name']; // Usar 'building_name'
+        report.roomName = data['room_name'];
+        report.categoryName = data['category_name'];
+        report.goodName = data['good_name'];
+        report.userName = data['user_name'];
+        report.statusName = data['status_name'];
+        return report;
+      } else if (response.statusCode == 404) {
+        throw Exception('Folio no encontrado');
+      } else {
+        throw Exception('Failed to load report: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching report by folio: $e'); // Agregar mensaje de depuración
+      throw Exception('Failed to load report: $e');
     }
   }
 
