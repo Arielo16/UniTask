@@ -19,9 +19,10 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
   final List<Map<String, dynamic>> _materials = [];
 
   final Map<String, String> _statusOptions = {
-    'Pendiente': 'Pendiente',
+    'Enviado': 'Enviado',
     'En proceso': 'EnProceso',
-    'Completado': 'Completado',
+    'Enviado a Aprobación': 'EnviadoAprobacion',
+    'Terminado': 'Terminado',
   };
 
   void _addMaterial() {
@@ -245,6 +246,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   ),
                 );
               }),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _addMaterial,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor),
+                child: const Text('Agregar Material',
+                    style: TextStyle(color: Colors.white)),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitDiagnostic,

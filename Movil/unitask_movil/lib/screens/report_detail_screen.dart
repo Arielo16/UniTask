@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import '../models/Reports.dart';
 import 'diagnostic_screen.dart';
-import 'dart:convert';
 import '../widgets/card_detalles.dart';
 import '../theme/colors.dart';
 
