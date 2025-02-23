@@ -14,12 +14,11 @@ class Building extends Model
     protected $primaryKey = 'buildingID'; 
 
     public $incrementing = true; 
-
-    protected $keyType = 'int';
     
     protected $fillable = [
         'buildingID',
         'name',
+        'keyID',
     ];
 
     public function rooms()
