@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description'); 
             $table->mediumText('image')->nullable(); 
             $table->unsignedBigInteger('userID'); 
-            $table->unsignedBigInteger('statusID'); 
+            $table->enum('status', ['Enviado', 'Enviado A Aprobacion', 'En Diagnostico', 'Diagnosticado', 'En Proceso', 'En Requisición ','Terminado']);
             $table->boolean('requires_approval')->default(false); 
             $table->boolean('involve_third_parties')->default(false); 
             $table->timestamps(); 
@@ -30,7 +30,6 @@ return new class extends Migration
             $table->foreign('categoryID')->references('categoryID')->on('categories')->onDelete('cascade');
             $table->foreign('goodID')->references('goodID')->on('goods')->onDelete('cascade');
             $table->foreign('userID')->references('userID')->on('users')->onDelete('cascade');
-            $table->foreign('statusID')->references('statusID')->on('statuses')->onDelete('cascade');
         });
 
         DB::table('reports')->insert([
@@ -44,7 +43,7 @@ return new class extends Migration
                 'description' => 'Broken chair in room 101',
                 'image' => null,
                 'userID' => 1,
-                'statusID' => 1,
+                'statusID' => 'Enviado',
                 'requires_approval' => false,
                 'involve_third_parties' => false,
                 'created_at' => now(),
@@ -60,7 +59,7 @@ return new class extends Migration
                 'description' => 'Window needs repair in room 202',
                 'image' => null,
                 'userID' => 2,
-                'statusID' => 2,
+                'status' => 'Enviado',
                 'requires_approval' => true,
                 'involve_third_parties' => false,
                 'created_at' => now(),
@@ -76,7 +75,7 @@ return new class extends Migration
                 'description' => 'Electrical issue in room 303',
                 'image' => null,
                 'userID' => 2,
-                'statusID' => 3,
+                'status' => 'Enviado',
                 'requires_approval' => false,
                 'involve_third_parties' => true,
                 'created_at' => now(),
@@ -92,7 +91,7 @@ return new class extends Migration
                 'description' => 'Broken window in room 404',
                 'image' => null,
                 'userID' => 1,
-                'statusID' => 4,
+                'status' => 'Enviado',
                 'requires_approval' => true,
                 'involve_third_parties' => false,
                 'created_at' => now(),
@@ -108,13 +107,12 @@ return new class extends Migration
                 'description' => 'Plumbing issue in room 505',
                 'image' => null,
                 'userID' => 1,
-                'statusID' => 1,
+                'status' => 'Enviado',
                 'requires_approval' => false,
                 'involve_third_parties' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-            // Agrega más datos según sea necesario
         ]);
     }
 
