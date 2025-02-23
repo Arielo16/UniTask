@@ -12,10 +12,11 @@ class DiagnosticScreen extends StatefulWidget {
   _DiagnosticScreenState createState() => _DiagnosticScreenState();
 }
 
+
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   final _formKey = GlobalKey<FormState>();
   String _description = '';
-  String _status = 'Pendiente';
+  String _status = 'Enviado';
   final List<Map<String, dynamic>> _materials = [];
 
   final Map<String, String> _statusOptions = {

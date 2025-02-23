@@ -98,16 +98,6 @@ class CardInicioSesion extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: rememberMe,
-                        onChanged: onRememberMeChanged,
-                      ),
-                      const Text('Recuérdame'),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: onLogin,
                     style: ElevatedButton.styleFrom(

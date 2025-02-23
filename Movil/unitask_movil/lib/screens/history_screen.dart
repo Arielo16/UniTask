@@ -13,7 +13,14 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   late Future<List<Diagnostic>> futureDiagnostics;
-  String selectedStatus = 'Completado';
+  String selectedStatus = 'Enviado';
+
+  final Map<String, String> _statusOptions = {
+    'Enviado': 'Enviado',
+    'En Proceso': 'EnProceso',
+    'Enviado a Aprobación': 'EnviadoAprobacion',
+    'Terminado': 'Terminado',
+  };
 
   @override
   void initState() {
@@ -23,7 +30,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   void _loadDiagnostics() {
     setState(() {
-      futureDiagnostics = ApiService().fetchDiagnosticsByStatus(selectedStatus);
+      futureDiagnostics = ApiService().fetchDiagnosticsByStatus(_statusOptions[selectedStatus]!);
     });
   }
 
@@ -50,7 +57,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         _loadDiagnostics();
                       });
                     },
-                    items: <String>['Completado', 'EnProceso', 'Enviado']
+                    items: _statusOptions.keys
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
