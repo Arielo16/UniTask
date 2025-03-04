@@ -51,20 +51,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           reportID: widget.report.reportID,
           description: _description,
           status: _statusOptions[_status]!,
-          images: null, // Aquí se envía null para las imágenes
+          images: 'imagen', // Aquí se envía null para las imágenes
+          materials: _materials.isNotEmpty ? _materials : null,
         );
-
-        if (_materials.isNotEmpty) {
-          await ApiService().postMaterials(
-            diagnosticID: diagnosticID,
-            materials: _materials,
-          );
-        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Diagnóstico enviado con éxito')),
         );
-        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),

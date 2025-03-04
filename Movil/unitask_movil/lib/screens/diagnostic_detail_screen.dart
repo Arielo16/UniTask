@@ -14,21 +14,11 @@ class DiagnosticDetailScreen extends StatefulWidget {
 
 class _DiagnosticDetailScreenState extends State<DiagnosticDetailScreen> {
   late Future<List<Map<String, dynamic>>> _futureMaterials;
-  late String selectedStatus;
-  final Map<String, String> _statusOptions = {
-    'EnProceso': 'En Proceso',
-    'Pendiente': 'Pendiente',
-    'Completado': 'Completado',
-  };
 
   @override
   void initState() {
     super.initState();
     _futureMaterials = ApiService().fetchMaterialsByDiagnostic(widget.diagnostic.diagnosticID);
-    selectedStatus = widget.diagnostic.status;
-    if (!_statusOptions.containsKey(selectedStatus)) {
-      selectedStatus = _statusOptions.keys.first;
-    }
   }
 
   @override
@@ -83,21 +73,9 @@ class _DiagnosticDetailScreenState extends State<DiagnosticDetailScreen> {
                       ),
                     ),
                     SizedBox(height: 8.0),
-                    DropdownButton<String>(
-                      value: _statusOptions.containsKey(selectedStatus) ? selectedStatus : _statusOptions.keys.first,
-                      items: _statusOptions.keys.map((String key) {
-                        return DropdownMenuItem<String>(
-                          value: key,
-                          child: Text(_statusOptions[key]!),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null && _statusOptions.containsKey(newValue)) {
-                          setState(() {
-                            selectedStatus = newValue;
-                          });
-                        }
-                      },
+                    Text(
+                      widget.diagnostic.status,
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ],
                 ),

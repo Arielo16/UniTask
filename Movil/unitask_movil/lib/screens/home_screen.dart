@@ -5,6 +5,7 @@ import '../models/Diagnostic.dart';
 import '../widgets/report_list_item.dart';
 import 'diagnostic_detail_screen.dart';
 import '../theme/colors.dart';
+import '../models/report_by_folio.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _selectedIndex = 0;
   String selectedStatus = 'EnProceso';
+  String selectedPriority = 'Immediate';
   List<Report> searchedReports = [];
 
   @override
@@ -33,6 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void _loadReports() {
     setState(() {
       futureReports = ApiService().fetchReports();
+    });
+  }
+
+  void _loadReportsByPriority() {
+    setState(() {
+      futureReports = ApiService().fetchReportsByPriority(selectedPriority);
     });
   }
 
@@ -51,8 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _searchReport() async {
     try {
-      final report =
-          await ApiService().fetchReportByFolio(_searchController.text);
+      final report = await ApiService().fetchReportByFolio(_searchController.text);
       setState(() {
         searchedReports = [report];
       });
@@ -148,6 +155,35 @@ class _HomeScreenState extends State<HomeScreen> {
               IconButton(
                 icon: const Icon(Icons.search, color: Color(0xFF00664F)),
                 onPressed: _searchReport,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: DropdownButton<String>(
+                  value: selectedPriority,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedPriority = newValue!;
+                      _loadReportsByPriority();
+                    });
+                  },
+                  items: <String>['Immediate', 'Normal']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.filter_list, color: Color(0xFF00664F)),
+                onPressed: _loadReportsByPriority,
               ),
             ],
           ),
