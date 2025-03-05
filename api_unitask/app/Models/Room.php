@@ -13,12 +13,14 @@ class Room extends Model
 
     public $incrementing = false; // Desactiva el autoincremento (por la llave compuesta)
 
-    protected $primaryKey = ['roomID', 'buildingID']; // Llave primaria compuesta
+    protected $primaryKey = ['KeyID', 'buildingID']; // Llave primaria compuesta
 
     public $timestamps = true; // Las columnas created_at y updated_at están activas
 
     protected $fillable = [
         'roomID',
+        'name',
+        'keyID',
         'buildingID',
         'typeID',
     ]; // Campos que se pueden asignar masivamente

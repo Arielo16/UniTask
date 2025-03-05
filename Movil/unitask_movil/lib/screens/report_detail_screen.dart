@@ -2,14 +2,37 @@
 import 'package:flutter/material.dart';
 import '../models/Reports.dart';
 import 'diagnostic_screen.dart';
-import 'dart:convert';
 import '../widgets/card_detalles.dart';
 import '../theme/colors.dart';
+import '../services/api_service.dart';
 
 class ReportDetailScreen extends StatelessWidget {
   final Report report;
 
   const ReportDetailScreen({super.key, required this.report});
+
+  void _checkReportStatusAndNavigate(BuildContext context) async {
+    try {
+      final statusID = await ApiService().fetchReportStatus(report.reportID);
+      if (statusID == 1) {
+        await ApiService().changeReportStatus(report.reportID, 'diagnosticando');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DiagnosticScreen(report: report),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se puede diagnosticar este reporte')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +53,7 @@ class ReportDetailScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DiagnosticScreen(report: report),
-                      ),
-                    );
-                  },
+                  onPressed: () => _checkReportStatusAndNavigate(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
                     padding: const EdgeInsets.symmetric(

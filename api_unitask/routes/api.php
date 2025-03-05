@@ -68,8 +68,6 @@ Route::prefix('diagnostics')->group(function () {
 Route::prefix('users')->group(function () {
     Route::post('verifyLogin/', [UserController::class, 'verifyLogin']); // Verificar el estado de inicio de sesión del usuario
 
-
-    Route::get('get/', [UserController::class, 'index']); // Obtener todos los usuarios
     Route::post('post/', [UserController::class, 'store']); // Crear un usuario
     Route::get('get/{matricula}', [UserController::class, 'show']); // Obtener un usuario específico
     Route::put('put/{matricula}', [UserController::class, 'update']); // Actualizar un usuario

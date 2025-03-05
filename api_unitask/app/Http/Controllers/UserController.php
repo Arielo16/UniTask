@@ -31,6 +31,8 @@ class UserController extends Controller
         return response()->json(['message' => 'No'], 401);
     }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////7
+
     // Cerrar sesión de usuario
     public function logout(Request $request)
     {
@@ -41,12 +43,7 @@ class UserController extends Controller
         return response()->json(['message' => 'Logout successful'], 200);
     }
 
-    // Obtener todos los usuarios
-    public function index()
-    {
-        $users = User::all();
-        return response()->json($users, 200);
-    }
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Crear un nuevo usuario
     public function store(Request $request)

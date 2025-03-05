@@ -12,16 +12,18 @@ class DiagnosticScreen extends StatefulWidget {
   _DiagnosticScreenState createState() => _DiagnosticScreenState();
 }
 
+
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   final _formKey = GlobalKey<FormState>();
   String _description = '';
-  String _status = 'Pendiente';
+  String _status = 'Enviado';
   final List<Map<String, dynamic>> _materials = [];
 
   final Map<String, String> _statusOptions = {
-    'Pendiente': 'Pendiente',
+    'Enviado': 'Enviado',
     'En proceso': 'EnProceso',
-    'Completado': 'Completado',
+    'Enviado a Aprobación': 'EnviadoAprobacion',
+    'Terminado': 'Terminado',
   };
 
   void _addMaterial() {
@@ -49,20 +51,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           reportID: widget.report.reportID,
           description: _description,
           status: _statusOptions[_status]!,
-          images: null, // Aquí se envía null para las imágenes
+          images: 'imagen', // Aquí se envía null para las imágenes
+          materials: _materials.isNotEmpty ? _materials : null,
         );
-
-        if (_materials.isNotEmpty) {
-          await ApiService().postMaterials(
-            diagnosticID: diagnosticID,
-            materials: _materials,
-          );
-        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Diagnóstico enviado con éxito')),
         );
-        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
@@ -245,6 +241,14 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
                   ),
                 );
               }),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _addMaterial,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor),
+                child: const Text('Agregar Material',
+                    style: TextStyle(color: Colors.white)),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitDiagnostic,

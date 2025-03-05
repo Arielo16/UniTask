@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('reportID');
             $table->text('description');
             $table->mediumText('images');
-            $table->enum('status', ['Enviado', 'EnviadoAprobacion', 'EnProceso', 'Terminado']);
+            $table->enum('status', ['Enviado', 'En Proceso', 'Terminado']);
             $table->timestamps();
 
             // Llave foránea
@@ -40,7 +40,7 @@ return new class extends Migration
                 'reportID' => 2,
                 'description' => 'Diagnostic for window repair in room 202',
                 'images' => '',
-                'status' => 'EnviadoAprobacion',
+                'status' => 'Enviado',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -48,7 +48,7 @@ return new class extends Migration
                 'reportID' => 3,
                 'description' => 'Diagnostic for electrical issue in room 303',
                 'images' => '',
-                'status' => 'EnProceso',
+                'status' => 'Enviado',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -56,7 +56,7 @@ return new class extends Migration
                 'reportID' => 4,
                 'description' => 'Diagnostic for broken window in room 404',
                 'images' => '',
-                'status' => 'Terminado',
+                'status' => 'Enviado',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
