@@ -2,10 +2,10 @@
 class Report {
   final int reportID;
   final String folio;
-  final int buildingID;
-  final int roomID;
-  final int categoryID;
-  final int goodID;
+  final String buildingID;
+  final String roomID;
+  final String categoryID;
+  final String goodID;
   final String priority;
   final String description;
   final String? image;
@@ -16,12 +16,12 @@ class Report {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  String? buildingName;
-  String? roomName;
-  String? categoryName;
-  String? goodName;
-  String? userName;
-  String? statusName;
+  String buildingName;
+  String roomName;
+  String categoryName;
+  String goodName;
+  String userName;
+  String statusName;
 
   Report({
     required this.reportID,
@@ -39,6 +39,12 @@ class Report {
     required this.involveThirdParties,
     required this.createdAt,
     required this.updatedAt,
+    required this.buildingName,
+    required this.roomName,
+    required this.categoryName,
+    required this.goodName,
+    required this.userName,
+    required this.statusName,
   });
 
   factory Report.fromJson(Map<String, dynamic> json) {
@@ -62,6 +68,12 @@ class Report {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : DateTime.now(),
+      buildingName: json['buildingID'] as String? ?? '',
+      roomName: json['roomID'] as String? ?? '',
+      categoryName: json['categoryID'] as String? ?? '',
+      goodName: json['goodID'] as String? ?? '',
+      userName: json['id'] as String? ?? '',
+      statusName: json['status'] as String? ?? '',
     );
   }
 }

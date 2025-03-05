@@ -5,14 +5,16 @@ import '../models/login_response.dart';
 import '../models/Reports.dart';
 import '../models/Diagnostic.dart';
 import '../models/report_by_folio.dart';
+import 'package:flutter/foundation.dart'; // Agregado para kIsWeb
 
 class ApiService {
+  // Cambiar la URL base según el entorno
   final String baseUrl =
-      "https://apiunitaskproduction-production.up.railway.app/api"; // Asegúrate de que esta URL sea correcta
+      kIsWeb ? "http://127.0.0.1:8000/api" : "http://10.0.2.2:8000/api";
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/users/verifyLogin'),
+      Uri.parse('$baseUrl/users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -32,19 +34,27 @@ class ApiService {
   }
 
   Future<List<Report>> fetchReports() async {
-    final response = await http.get(Uri.parse('$baseUrl/reports/get'));
+    final response = await http.get(Uri.parse('$baseUrl/reports'));
 
     if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body);
-      List<Report> reports = body.map((dynamic item) {
+      final parsed = json.decode(response.body);
+      List<dynamic> reportList;
+      if (parsed is Map && parsed.containsKey('reports')) {
+        reportList = parsed['reports'];
+      } else if (parsed is List) {
+        reportList = parsed;
+      } else {
+        throw Exception('Formato de respuesta inesperado');
+      }
+      List<Report> reports = reportList.map((dynamic item) {
         var report = Report.fromJson(item);
-        report.buildingName =
-            item['building']['key']; // Use 'key' instead of 'name'
-        report.roomName = item['room']['name'];
-        report.categoryName = item['category']['name'];
-        report.goodName = item['goods']['name'];
-        report.userName = item['user']['name'];
-        report.statusName = item['status']['name'];
+        // Mapeo con las nuevas claves
+        report.buildingName = item['buildingID'] ?? '';
+        report.roomName = item['roomID'] ?? '';
+        report.categoryName = item['categoryID'] ?? '';
+        report.goodName = item['goodID'] ?? '';
+        report.userName = item['id'] ?? '';
+        report.statusName = item['status'] ?? '';
         return report;
       }).toList();
       return reports;
