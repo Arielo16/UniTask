@@ -64,26 +64,31 @@ class ApiService {
   }
 
   Future<List<Report>> fetchReportsByPriority(String priority) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/getreportsbypriority'),
+    final response = await http.get(
+      Uri.parse('$baseUrl/reports/priority/$priority'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({
-        'priority': priority,
-      }),
     );
 
     if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body);
-      List<Report> reports = body.map((dynamic item) {
+      final parsed = json.decode(response.body);
+      List<dynamic> reportList;
+      if (parsed is Map && parsed.containsKey('reports')) {
+        reportList = parsed['reports'];
+      } else if (parsed is List) {
+        reportList = parsed;
+      } else {
+        throw Exception('Formato de respuesta inesperado');
+      }
+      List<Report> reports = reportList.map((dynamic item) {
         var report = Report.fromJson(item);
-        report.buildingName = item['building_name'];
-        report.roomName = item['room_name'];
-        report.categoryName = item['category_name'];
-        report.goodName = item['good_name'];
-        report.userName = item['user_name'];
-        report.statusName = item['status_name'];
+        report.buildingName = item['buildingID'] ?? '';
+        report.roomName = item['roomID'] ?? '';
+        report.categoryName = item['categoryID'] ?? '';
+        report.goodName = item['goodID'] ?? '';
+        report.userName = item['id'] ?? '';
+        report.statusName = item['status'] ?? '';
         return report;
       }).toList();
       return reports;
@@ -95,18 +100,42 @@ class ApiService {
   Future<List<Diagnostic>> fetchDiagnosticsByStatus(String status) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/getalldiagnosticsstatus?status=$status'),
+        Uri.parse('$baseUrl/diagnostics/status/$status'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> body = json.decode(response.body);
-        List<Diagnostic> diagnostics = body.map((dynamic item) {
-          return Diagnostic.fromJson(item);
-        }).toList();
-        return diagnostics;
+        final parsed = json.decode(response.body);
+        List<dynamic> body;
+        if (parsed is Map) {
+          if (parsed.containsKey('diagnostic')) {
+            // Single diagnostic response: remove materials and wrap in a list.
+            Map<String, dynamic> diagnosticData = Map.from(parsed['diagnostic']);
+            diagnosticData.remove('materials');
+            return [Diagnostic.fromJson(diagnosticData)];
+          } else if (parsed.containsKey('diagnostics')) {
+            body = parsed['diagnostics'];
+            // Remove materials from each diagnostic.
+            body = body.map((item) {
+              var diag = Map<String, dynamic>.from(item);
+              diag.remove('materials');
+              return diag;
+            }).toList();
+          } else {
+            throw Exception('Formato de respuesta inesperado');
+          }
+        } else if (parsed is List) {
+          body = parsed.map((item) {
+            var diag = Map<String, dynamic>.from(item);
+            diag.remove('materials');
+            return diag;
+          }).toList();
+        } else {
+          throw Exception('Formato de respuesta inesperado');
+        }
+        return body.map((dynamic item) => Diagnostic.fromJson(item)).toList();
       } else {
         throw Exception('Failed to load diagnostics: ${response.reasonPhrase}');
       }
@@ -117,21 +146,24 @@ class ApiService {
 
   Future<Report> fetchReportByFolio(String folio) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/getreportbyfolio?folio=$folio'),
+      Uri.parse('$baseUrl/reports/folio/$folio'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
+      // Extrae el objeto 'report' de la respuesta
+      final Map<String, dynamic> outer = jsonDecode(response.body);
+      final Map<String, dynamic> data = outer['report'];
       var report = Report.fromJson(data);
-      report.buildingName = data['building_name'];
-      report.roomName = data['room_name'];
-      report.categoryName = data['category_name'];
-      report.goodName = data['good_name'];
-      report.userName = data['user_name'];
-      report.statusName = data['status_name'];
+      // Asigna los nombres usando las nuevas claves
+      report.buildingName = data['buildingID'] ?? '';
+      report.roomName = data['roomID'] ?? '';
+      report.categoryName = data['categoryID'] ?? '';
+      report.goodName = data['goodID'] ?? '';
+      report.userName = data['id'] ?? '';
+      report.statusName = data['status'] ?? '';
       return report;
     } else if (response.statusCode == 404) {
       throw Exception('Folio no encontrado');
@@ -243,6 +275,23 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to change report status: ${response.reasonPhrase}');
+    }
+  }
+
+  // Se agrega el siguiente método para obtener el detalle completo del diagnóstico:
+  Future<Diagnostic> fetchDiagnosticDetail(int diagnosticID) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/diagnostics/report/$diagnosticID'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> parsed = jsonDecode(response.body);
+      final Map<String, dynamic> data = parsed['diagnostic'];
+      return Diagnostic.fromJson(data);
+    } else {
+      throw Exception('Failed to load diagnostic detail: ${response.reasonPhrase}');
     }
   }
 }

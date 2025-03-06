@@ -3,6 +3,7 @@ import '../models/Diagnostic.dart';
 import '../services/api_service.dart';
 import 'diagnostic_detail_screen.dart';
 import '../theme/colors.dart';
+import '../widgets/diagnostic_card.dart'; // Agregado para usar DiagnosticCard
 
 class DiagnosticsScreen extends StatefulWidget {
   const DiagnosticsScreen({super.key});
@@ -22,7 +23,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   void _loadDiagnostics() {
     setState(() {
-      futureDiagnostics = ApiService().fetchDiagnosticsByStatus('EnProceso');
+      futureDiagnostics = ApiService().fetchDiagnosticsByStatus('En Proceso');
     });
   }
 
@@ -63,44 +64,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   final diagnostic = snapshot.data![index];
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    tileColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.primaryColor,
-                      child: Text(
-                        diagnostic.reportFolio.substring(0, 2).toUpperCase(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    title: Text(
-                      'Folio: ${diagnostic.reportFolio}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF00664F),
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Descripción: ${diagnostic.description}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
-                        ),
-                      );
-                    },
-                  );
+                  return DiagnosticCard(diagnostic: diagnostic);
                 },
               );
             }

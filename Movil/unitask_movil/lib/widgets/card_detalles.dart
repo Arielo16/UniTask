@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/Reports.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart'; // Agregado para formatear la fecha
 
 class CardDetalles extends StatelessWidget {
   final Report report;
@@ -27,13 +28,10 @@ class CardDetalles extends StatelessWidget {
             _buildDetailRow('Bien', report.goodName ?? 'No disponible'),
             _buildDetailRow('Prioridad', report.priority),
             _buildDetailRow('Descripción', report.description),
+            _buildDetailRow('Usuario que reporto', report.userName ?? 'No disponible'),
             _buildImageSection(report.image),
-            _buildDetailRow('Usuario', report.userName ?? 'No disponible'),
-            _buildDetailRow('Estado', report.statusName ?? 'No disponible'),
-            _buildDetailRow('Requiere Aprobación', report.requiresApproval ? 'Sí' : 'No'),
-            _buildDetailRow('Involucra Terceros', report.involveThirdParties ? 'Sí' : 'No'),
-            _buildDetailRow('Creado en', report.createdAt.toString()),
-            _buildDetailRow('Actualizado en', report.updatedAt.toString()),
+            // Se formatea la fecha para mostrar día, mes y año
+            _buildDetailRow('Creado en', DateFormat('dd/MM/yyyy').format(report.createdAt)),
           ],
         ),
       ),

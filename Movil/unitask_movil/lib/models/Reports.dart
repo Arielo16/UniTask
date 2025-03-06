@@ -9,7 +9,7 @@ class Report {
   final String priority;
   final String description;
   final String? image;
-  final int userID;
+  final String userID;
   final int statusID;
   final bool requiresApproval;
   final bool involveThirdParties;

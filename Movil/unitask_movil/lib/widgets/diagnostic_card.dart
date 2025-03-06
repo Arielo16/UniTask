@@ -1,13 +1,12 @@
-// lib/widgets/report_card.dart
-// Se actualizó el diseño de ReportCard para un estilo moderno con gradiente, bordes redondeados y sombra.
 import 'package:flutter/material.dart';
-import '../models/Reports.dart';
-import '../screens/report_detail_screen.dart';
+import '../models/Diagnostic.dart';
+import '../screens/diagnostic_detail_screen.dart';
+import '../theme/colors.dart';
 
-class ReportCard extends StatelessWidget {
-  final Report report;
+class DiagnosticCard extends StatelessWidget {
+  final Diagnostic diagnostic;
 
-  const ReportCard({super.key, required this.report});
+  const DiagnosticCard({super.key, required this.diagnostic});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class ReportCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ReportDetailScreen(report: report),
+            builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
           ),
         );
       },
@@ -35,14 +34,14 @@ class ReportCard extends StatelessWidget {
               color: Colors.black26,
               blurRadius: 6,
               offset: Offset(2, 4),
-            )
+            ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Folio: ${report.folio}',
+              'Folio: ${diagnostic.reportFolio}',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -51,17 +50,26 @@ class ReportCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Edificio: ${report.buildingName.isNotEmpty ? report.buildingName : 'No disponible'}',
-              style: const TextStyle(fontSize: 16, color: Colors.white70),
+              'Descripción: ${diagnostic.description}',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
             ),
+            const SizedBox(height: 8),
             Text(
-              'Salón: ${report.roomName.isNotEmpty ? report.roomName : 'No disponible'}',
-              style: const TextStyle(fontSize: 16, color: Colors.white70),
+              'Estado: ${diagnostic.status}',
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+              ),
             ),
             const SizedBox(height: 12),
             Align(
               alignment: Alignment.bottomRight,
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_forward,
                 color: Colors.white,
                 size: 28,

@@ -6,6 +6,8 @@ class Diagnostic {
   final String? images;
   final String status;
   final DateTime createdAt;
+  final DateTime updatedAt;
+  final List<dynamic> materials; 
 
   Diagnostic({
     required this.diagnosticID,
@@ -15,6 +17,8 @@ class Diagnostic {
     this.images,
     required this.status,
     required this.createdAt,
+    required this.updatedAt,
+    required this.materials,
   });
 
   factory Diagnostic.fromJson(Map<String, dynamic> json) {
@@ -28,6 +32,10 @@ class Diagnostic {
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : DateTime.now(),
+      materials: json['materials'] ?? [],
     );
   }
 }
