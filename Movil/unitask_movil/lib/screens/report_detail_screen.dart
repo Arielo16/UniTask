@@ -13,9 +13,8 @@ class ReportDetailScreen extends StatelessWidget {
 
   void _checkReportStatusAndNavigate(BuildContext context) async {
     try {
-      final statusID = await ApiService().fetchReportStatus(report.reportID);
-      if (statusID == 1) {
-        await ApiService().changeReportStatus(report.reportID, 'diagnosticando');
+      final canDiagnose = await ApiService().fetchReportStatus(report.reportID);
+      if (canDiagnose) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -24,7 +23,7 @@ class ReportDetailScreen extends StatelessWidget {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se puede diagnosticar este reporte')),
+          const SnackBar(content: Text('El reporte ya está en proceso')),
         );
       }
     } catch (e) {

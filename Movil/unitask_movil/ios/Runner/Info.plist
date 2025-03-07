@@ -50,5 +50,8 @@
 	    <key>NSAllowsArbitraryLoads</key>
 	    <true/>
 	</dict>
+	<!-- nuevo permiso de cámara -->
+	<key>NSCameraUsageDescription</key>
+	<string>Esta aplicación necesita acceder a la cámara para tomar fotos.</string>
 </dict>
 </plist>

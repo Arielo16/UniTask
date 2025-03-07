@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../models/Reports.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart'; // Agregado para formatear la fecha
 
 class CardDetalles extends StatelessWidget {
@@ -67,15 +67,28 @@ class CardDetalles extends StatelessWidget {
     );
   }
 
-  Widget _buildImageSection(String? base64Image) {
-    if (base64Image != null && base64Image.isNotEmpty) {
+  // Reemplaza el método _buildImageSection para que use la URL absoluta si el campo "image" es una URL.
+  Widget _buildImageSection(String? imagePath) {
+    if (imagePath != null && imagePath.isNotEmpty) {
+      // Si la cadena ya es una URL (empieza con "http"), la usamos tal cual.
+      final String url = imagePath.startsWith("http")
+          ? imagePath.trim()
+          : 'https://apiunitask-production.up.railway.app/api/${imagePath.trim()}';
+      print("URL de la imagen: $url"); // Debug: muestra la URL en la consola
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Image.memory(
-          base64Decode(base64Image),
+        child: Image.network(
+          url,
           height: 200,
           width: double.infinity,
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       );
     } else {
@@ -88,10 +101,7 @@ class CardDetalles extends StatelessWidget {
           child: Center(
             child: Text(
               'No hay imagen disponible',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.grey[700], fontSize: 16),
             ),
           ),
         ),

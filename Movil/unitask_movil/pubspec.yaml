@@ -18,6 +18,7 @@ dependencies:
   image_picker: ^1.1.2
   flutter_colorpicker: ^1.0.3
   logger: ^2.5.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,16 +1,16 @@
 // lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:http_parser/http_parser.dart'; // Agregado para MediaType
 import '../models/login_response.dart';
 import '../models/Reports.dart';
 import '../models/Diagnostic.dart';
 import '../models/report_by_folio.dart';
-import 'package:flutter/foundation.dart'; // Agregado para kIsWeb
 
 class ApiService {
   // Cambiar la URL base según el entorno
-  final String baseUrl =
-      kIsWeb ? "http://127.0.0.1:8000/api" : "http://10.0.2.2:8000/api";
+  final String baseUrl =  'https://apiunitask-production.up.railway.app/api';
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
@@ -175,24 +175,29 @@ class ApiService {
   Future<int> postDiagnostic({
     required int reportID,
     required String description,
-    required String status,
-    String? images,
-    List<Map<String, dynamic>>? materials,
+    required String status, // "Enviado", "Para Reparar", "En Proceso", "Terminado"
+    File? image, // Se recibe la imagen en lugar de la ruta
+    List<Map<String, int>>? materials, // Lista de materiales con materialID y quantity
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/postdiagnostic'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'reportID': reportID,
-        'description': description,
-        'images': 'imagen',
-        'status': status,
-        'materials': materials ?? [],
-      }),
-    );
-
+    final uri = Uri.parse('$baseUrl/diagnostics/create');
+    final request = http.MultipartRequest('POST', uri);
+    request.fields['reportID'] = reportID.toString();
+    request.fields['description'] = description;
+    request.fields['status'] = status;
+    if (materials != null) {
+      request.fields['materials'] = jsonEncode(materials);
+    }
+    if (image != null) {
+      var stream = http.ByteStream(image.openRead());
+      var length = await image.length();
+      request.files.add(
+        http.MultipartFile('image', stream, length, filename: 'upload.jpg',
+        contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+    }
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       return data['diagnosticID'];
@@ -201,80 +206,19 @@ class ApiService {
     }
   }
 
-  Future<void> postMaterials({
-    required int diagnosticID,
-    required List<Map<String, dynamic>> materials,
-  }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/postmaterials'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'diagnosticID': diagnosticID,
-        'materials': materials,
-      }),
-    );
-
-    if (response.statusCode != 201) {
-      throw Exception('Failed to post materials: ${response.reasonPhrase}');
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> fetchMaterialsByDiagnostic(int diagnosticID) async {
+  Future<bool> fetchReportStatus(int reportID) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/getmaterialsbydiagnostic/$diagnosticID'),
+      Uri.parse('$baseUrl/reports/check-status/$reportID'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
-
-    if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body);
-      List<Map<String, dynamic>> materials = body.map((dynamic item) {
-        return {
-          'name': item['name'],
-          'supplier': item['supplier'],
-          'quantity': item['quantity'],
-          'price': item['price'],
-        };
-      }).toList();
-      return materials;
-    } else {
-      throw Exception('Failed to load materials: ${response.reasonPhrase}');
-    }
-  }
-
-  Future<int> fetchReportStatus(int reportID) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/getreportstatus/$reportID'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
-      return data['statusID'];
+      // Asumimos que API retorna statusID == 1 cuando es true
+      return data['status'] == true;
     } else {
       throw Exception('Failed to fetch report status: ${response.reasonPhrase}');
-    }
-  }
-
-  Future<void> changeReportStatus(int reportID, String status) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/changereportstatus'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'reportID': reportID,
-        'status': status,
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to change report status: ${response.reasonPhrase}');
     }
   }
 
@@ -292,6 +236,18 @@ class ApiService {
       return Diagnostic.fromJson(data);
     } else {
       throw Exception('Failed to load diagnostic detail: ${response.reasonPhrase}');
+    }
+  }
+
+  // Nuevo método para obtener la lista de materiales
+  Future<List<Map<String, dynamic>>> fetchMaterials() async {
+    final response = await http.get(Uri.parse('$baseUrl/materials'));
+    if (response.statusCode == 200) {
+      final parsed = jsonDecode(response.body);
+      List<dynamic> materials = parsed['materials'];
+      return materials.map<Map<String, dynamic>>((item) => item).toList();
+    } else {
+      throw Exception('Failed to fetch materials: ${response.reasonPhrase}');
     }
   }
 }
