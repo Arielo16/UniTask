@@ -15,7 +15,7 @@ class DiagnosticCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DiagnosticDetailScreen(diagnostic: diagnostic),
+            builder: (context) => DiagnosticDetailScreen(reportID: diagnostic.reportID),
           ),
         );
       },

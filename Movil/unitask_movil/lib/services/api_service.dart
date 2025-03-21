@@ -176,7 +176,7 @@ class ApiService {
     required int reportID,
     required String description,
     required String status, // "Enviado", "Para Reparar", "En Proceso", "Terminado"
-    File? image, // Se recibe la imagen en lugar de la ruta
+    File? images, // Se recibe la imagen en lugar de la ruta
     List<Map<String, int>>? materials, // Lista de materiales con materialID y quantity
   }) async {
     final uri = Uri.parse('$baseUrl/diagnostics/create');
@@ -184,15 +184,24 @@ class ApiService {
     request.fields['reportID'] = reportID.toString();
     request.fields['description'] = description;
     request.fields['status'] = status;
+    // Enviar los materiales en formato form-data: materials[0][materialID], materials[0][quantity], etc.
     if (materials != null) {
-      request.fields['materials'] = jsonEncode(materials);
+      for (int i = 0; i < materials.length; i++) {
+        var material = materials[i];
+        request.fields['materials[$i][materialID]'] = material['materialID'].toString();
+        request.fields['materials[$i][quantity]'] = material['quantity'].toString();
+      }
     }
-    if (image != null) {
-      var stream = http.ByteStream(image.openRead());
-      var length = await image.length();
+    if (images != null) {
+      var stream = http.ByteStream(images.openRead());
+      var length = await images.length();
       request.files.add(
-        http.MultipartFile('image', stream, length, filename: 'upload.jpg',
-        contentType: MediaType('image', 'jpeg'),
+        http.MultipartFile(
+          'images',
+          stream,
+          length,
+          filename: images.path.split('/').last,
+          contentType: MediaType('images', 'jpeg'),
         ),
       );
     }
@@ -200,7 +209,12 @@ class ApiService {
     final response = await http.Response.fromStream(streamedResponse);
     if (response.statusCode == 201) {
       final Map<String, dynamic> data = jsonDecode(response.body);
-      return data['diagnosticID'];
+      // Se extrae diagnosticID desde el objeto "diagnostic"
+      final diagnostic = data['diagnostic'];
+      if (diagnostic == null || diagnostic['diagnosticID'] == null) {
+        throw Exception('La API retornó diagnostic o diagnosticID null');
+      }
+      return diagnostic['diagnosticID'];
     } else {
       throw Exception('Failed to post diagnostic: ${response.reasonPhrase}');
     }
@@ -231,9 +245,23 @@ class ApiService {
       },
     );
     if (response.statusCode == 200) {
-      final Map<String, dynamic> parsed = jsonDecode(response.body);
-      final Map<String, dynamic> data = parsed['diagnostic'];
-      return Diagnostic.fromJson(data);
+      final parsed = jsonDecode(response.body);
+      if (parsed.containsKey('diagnostics')) {
+        final diagnosticsList = parsed['diagnostics'] as List<dynamic>;
+        if (diagnosticsList.isEmpty) {
+          throw Exception('No se encontraron diagnósticos');
+        }
+        final diagnosticJson = diagnosticsList.firstWhere(
+          (diag) => diag['diagnosticID'] == diagnosticID,
+          orElse: () => null,
+        );
+        if (diagnosticJson == null) {
+          throw Exception('Diagnóstico con id $diagnosticID no encontrado');
+        }
+        return Diagnostic.fromJson(diagnosticJson);
+      } else {
+        throw Exception('Formato de respuesta inesperado');
+      }
     } else {
       throw Exception('Failed to load diagnostic detail: ${response.reasonPhrase}');
     }

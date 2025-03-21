@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart'; // nuevo import par
 import '../models/Reports.dart';
 import '../services/api_service.dart';
 import '../theme/colors.dart';
+import 'home_screen.dart';
 
 class DiagnosticScreen extends StatefulWidget {
   final Report report;
@@ -102,13 +103,16 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           reportID: widget.report.reportID,
           description: _description,
           status: "En Proceso",
-          image: _images.isNotEmpty ? _images.first : null, // se envía solo la primera imagen
+          images: _images.isNotEmpty ? _images.first : null, // se envía solo la primera imagen
           materials: materialData.isNotEmpty ? materialData : null,  // Se pasa la lista de materiales
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Diagnóstico enviado con éxito')),
         );
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
