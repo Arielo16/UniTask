@@ -9,8 +9,8 @@ class Report {
   final String priority;
   final String description;
   final String? image;
-  final String userID;
-  final int statusID;
+  final String id;
+  final String status;
   final bool requiresApproval;
   final bool involveThirdParties;
   final DateTime createdAt;
@@ -33,8 +33,8 @@ class Report {
     required this.priority,
     required this.description,
     this.image,
-    required this.userID,
-    required this.statusID,
+    required this.id,
+    required this.status,
     required this.requiresApproval,
     required this.involveThirdParties,
     required this.createdAt,
@@ -58,8 +58,8 @@ class Report {
       priority: json['priority'] ?? '',
       description: json['description'] ?? '',
       image: json['image'],
-      userID: json['userID'] ?? 0,
-      statusID: json['statusID'] ?? 0,
+      id: json['id'] ?? 0,
+      status: json['status'] ?? 0,
       requiresApproval: json['requires_approval'] == 1,
       involveThirdParties: json['involve_third_parties'] == 1,
       createdAt: json['created_at'] != null

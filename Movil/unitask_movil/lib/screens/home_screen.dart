@@ -25,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedStatus = 'En Proceso';
   String selectedPriority = 'Immediate';
   List<Report> searchedReports = [];
+  int _currentPage = 1;
+  int _totalPages = 1;
 
   @override
   void initState() {
@@ -34,9 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadHistoryDiagnostics();
   }
 
-  void _loadReports() {
+  void _loadReports({int page = 1}) {
     setState(() {
-      futureReports = ApiService().fetchReports();
+      futureReports = ApiService().fetchReports(page: page).then((data) {
+        _currentPage = data['pagination']['current_page'];
+        _totalPages = data['pagination']['last_page'];
+        return data['reports'];
+      });
     });
   }
 
@@ -61,7 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _searchReport() async {
     try {
-      final report = await ApiService().fetchReportByFolio(_searchController.text);
+      final report =
+          await ApiService().fetchReportByFolio(_searchController.text);
       setState(() {
         searchedReports = [report];
       });
@@ -98,7 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_selectedIndex], style: const TextStyle(color: Colors.white)),
+        title: Text(titles[_selectedIndex],
+            style: const TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
         actions: [
@@ -112,7 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: screens[_selectedIndex],
+      body: Column(
+        children: [
+          Expanded(child: screens[_selectedIndex]),
+          if (_selectedIndex == 0) _buildPaginationControls(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -149,19 +162,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: const [
-                      BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2,2))
+                      BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(2, 2))
                     ],
                   ),
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Buscar por Folio',
-                      prefixIcon: Icon(Icons.search, color: AppColors.primaryColor),
+                      prefixIcon:
+                          Icon(Icons.search, color: AppColors.primaryColor),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                     ),
                   ),
                 ),
@@ -170,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton(
                 onPressed: _searchReport,
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
                   backgroundColor: AppColors.primaryColor,
                   padding: const EdgeInsets.all(16),
                 ),
@@ -205,7 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       value,
                       style: TextStyle(
-                          color: AppColors.primaryColor, fontWeight: FontWeight.bold),
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold),
                     ),
                   );
                 }).toList(),
@@ -249,8 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Center(
                       child: Text(
                         'Error: ${snapshot.error}',
-                        style:
-                            const TextStyle(color: Colors.red, fontSize: 16),
+                        style: const TextStyle(color: Colors.red, fontSize: 16),
                       ),
                     );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -303,12 +322,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white70,
                               ),
                             ),
-                            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
+                            trailing: const Icon(Icons.arrow_forward,
+                                color: Colors.white),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ReportDetailScreen(report: report),
+                                  builder: (context) =>
+                                      ReportDetailScreen(report: report),
                                 ),
                               );
                             },
@@ -356,7 +377,8 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 final diagnostic = snapshot.data![index];
                 return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   tileColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -364,9 +386,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: CircleAvatar(
                     backgroundColor: AppColors.primaryColor,
                     child: Text(
-                      diagnostic.reportFolio.length >= 2 
-                        ? diagnostic.reportFolio.substring(0, 2).toUpperCase() 
-                        : diagnostic.reportFolio.toUpperCase(),
+                      diagnostic.reportFolio.length >= 2
+                          ? diagnostic.reportFolio.substring(0, 2).toUpperCase()
+                          : diagnostic.reportFolio.toUpperCase(),
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
@@ -385,12 +407,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.black54,
                     ),
                   ),
-                  trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
+                  trailing:
+                      const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DiagnosticDetailScreen(reportID: diagnostic.reportID),
+                        builder: (context) => DiagnosticDetailScreen(
+                            reportID: diagnostic.reportID),
                       ),
                     );
                   },
@@ -419,8 +443,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       _loadHistoryDiagnostics();
                     });
                   },
-                  items: <String>['Enviado', 'Diagnosticado', 'En Proceso', 'Terminado']
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: <String>[
+                    'Enviado',
+                    'Diagnosticado',
+                    'En Proceso',
+                    'Terminado'
+                  ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -466,7 +494,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       final diagnostic = snapshot.data![index];
                       return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         tileColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -474,9 +503,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         leading: CircleAvatar(
                           backgroundColor: AppColors.primaryColor,
                           child: Text(
-                            diagnostic.reportFolio.length >= 2 
-                              ? diagnostic.reportFolio.substring(0, 2).toUpperCase() 
-                              : diagnostic.reportFolio.toUpperCase(),
+                            diagnostic.reportFolio.length >= 2
+                                ? diagnostic.reportFolio
+                                    .substring(0, 2)
+                                    .toUpperCase()
+                                : diagnostic.reportFolio.toUpperCase(),
                             style: const TextStyle(color: Colors.white),
                           ),
                         ),
@@ -495,12 +526,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.black54,
                           ),
                         ),
-                        trailing: const Icon(Icons.arrow_forward, color: Color(0xFF4DC591)),
+                        trailing: const Icon(Icons.arrow_forward,
+                            color: Color(0xFF4DC591)),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DiagnosticDetailScreen(reportID: diagnostic.reportID),
+                              builder: (context) => DiagnosticDetailScreen(
+                                  reportID: diagnostic.reportID),
                             ),
                           );
                         },
@@ -513,6 +546,30 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton(
+            onPressed: _currentPage > 1
+                ? () => _loadReports(page: _currentPage - 1)
+                : null,
+            child: const Text('Previous'),
+          ),
+          Text('Page $_currentPage of $_totalPages'),
+          ElevatedButton(
+            onPressed: _currentPage < _totalPages
+                ? () => _loadReports(page: _currentPage + 1)
+                : null,
+            child: const Text('Next'),
+          ),
+        ],
+      ),
     );
   }
 }

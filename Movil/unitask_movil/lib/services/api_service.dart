@@ -10,7 +10,7 @@ import '../models/report_by_folio.dart';
 
 class ApiService {
   // Cambiar la URL base según el entorno
-  final String baseUrl =  'https://apiunitask-production.up.railway.app/api';
+  final String baseUrl = 'https://apiunitask-production.up.railway.app/api';
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await http.post(
@@ -33,22 +33,16 @@ class ApiService {
     }
   }
 
-  Future<List<Report>> fetchReports() async {
-    final response = await http.get(Uri.parse('$baseUrl/reports'));
+  Future<Map<String, dynamic>> fetchReports({int page = 1}) async {
+    final response = await http.get(Uri.parse('$baseUrl/reports?page=$page'));
 
     if (response.statusCode == 200) {
       final parsed = json.decode(response.body);
-      List<dynamic> reportList;
-      if (parsed is Map && parsed.containsKey('reports')) {
-        reportList = parsed['reports'];
-      } else if (parsed is List) {
-        reportList = parsed;
-      } else {
-        throw Exception('Formato de respuesta inesperado');
-      }
-      List<Report> reports = reportList.map((dynamic item) {
+      final pagination = parsed['pagination'];
+      final reportList = pagination['data'];
+
+      List<Report> reports = reportList.map<Report>((dynamic item) {
         var report = Report.fromJson(item);
-        // Mapeo con las nuevas claves
         report.buildingName = item['buildingID'] ?? '';
         report.roomName = item['roomID'] ?? '';
         report.categoryName = item['categoryID'] ?? '';
@@ -57,7 +51,11 @@ class ApiService {
         report.statusName = item['status'] ?? '';
         return report;
       }).toList();
-      return reports;
+
+      return {
+        'reports': reports,
+        'pagination': pagination,
+      };
     } else {
       throw Exception('Failed to load reports');
     }
@@ -93,7 +91,8 @@ class ApiService {
       }).toList();
       return reports;
     } else {
-      throw Exception('Failed to load reports by priority: ${response.reasonPhrase}');
+      throw Exception(
+          'Failed to load reports by priority: ${response.reasonPhrase}');
     }
   }
 
@@ -112,7 +111,8 @@ class ApiService {
         if (parsed is Map) {
           if (parsed.containsKey('diagnostic')) {
             // Single diagnostic response: remove materials and wrap in a list.
-            Map<String, dynamic> diagnosticData = Map.from(parsed['diagnostic']);
+            Map<String, dynamic> diagnosticData =
+                Map.from(parsed['diagnostic']);
             diagnosticData.remove('materials');
             return [Diagnostic.fromJson(diagnosticData)];
           } else if (parsed.containsKey('diagnostics')) {
@@ -175,9 +175,11 @@ class ApiService {
   Future<int> postDiagnostic({
     required int reportID,
     required String description,
-    required String status, // "Enviado", "Para Reparar", "En Proceso", "Terminado"
+    required String
+        status, // "Enviado", "Para Reparar", "En Proceso", "Terminado"
     File? images, // Se recibe la imagen en lugar de la ruta
-    List<Map<String, int>>? materials, // Lista de materiales con materialID y quantity
+    List<Map<String, int>>?
+        materials, // Lista de materiales con materialID y quantity
   }) async {
     final uri = Uri.parse('$baseUrl/diagnostics/create');
     final request = http.MultipartRequest('POST', uri);
@@ -188,8 +190,10 @@ class ApiService {
     if (materials != null) {
       for (int i = 0; i < materials.length; i++) {
         var material = materials[i];
-        request.fields['materials[$i][materialID]'] = material['materialID'].toString();
-        request.fields['materials[$i][quantity]'] = material['quantity'].toString();
+        request.fields['materials[$i][materialID]'] =
+            material['materialID'].toString();
+        request.fields['materials[$i][quantity]'] =
+            material['quantity'].toString();
       }
     }
     if (images != null) {
@@ -232,7 +236,8 @@ class ApiService {
       // Asumimos que API retorna statusID == 1 cuando es true
       return data['status'] == true;
     } else {
-      throw Exception('Failed to fetch report status: ${response.reasonPhrase}');
+      throw Exception(
+          'Failed to fetch report status: ${response.reasonPhrase}');
     }
   }
 
@@ -263,7 +268,8 @@ class ApiService {
         throw Exception('Formato de respuesta inesperado');
       }
     } else {
-      throw Exception('Failed to load diagnostic detail: ${response.reasonPhrase}');
+      throw Exception(
+          'Failed to load diagnostic detail: ${response.reasonPhrase}');
     }
   }
 
