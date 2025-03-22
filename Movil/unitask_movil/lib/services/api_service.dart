@@ -96,10 +96,11 @@ class ApiService {
     }
   }
 
-  Future<List<Diagnostic>> fetchDiagnosticsByStatus(String status) async {
+  Future<Map<String, dynamic>> fetchDiagnosticsByStatus(String status,
+      {int page = 1}) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/diagnostics/status/$status'),
+        Uri.parse('$baseUrl/diagnostics/status/$status?page=$page'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -107,35 +108,20 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final parsed = json.decode(response.body);
-        List<dynamic> body;
-        if (parsed is Map) {
-          if (parsed.containsKey('diagnostic')) {
-            // Single diagnostic response: remove materials and wrap in a list.
-            Map<String, dynamic> diagnosticData =
-                Map.from(parsed['diagnostic']);
-            diagnosticData.remove('materials');
-            return [Diagnostic.fromJson(diagnosticData)];
-          } else if (parsed.containsKey('diagnostics')) {
-            body = parsed['diagnostics'];
-            // Remove materials from each diagnostic.
-            body = body.map((item) {
-              var diag = Map<String, dynamic>.from(item);
-              diag.remove('materials');
-              return diag;
-            }).toList();
-          } else {
-            throw Exception('Formato de respuesta inesperado');
-          }
-        } else if (parsed is List) {
-          body = parsed.map((item) {
-            var diag = Map<String, dynamic>.from(item);
-            diag.remove('materials');
-            return diag;
-          }).toList();
-        } else {
-          throw Exception('Formato de respuesta inesperado');
-        }
-        return body.map((dynamic item) => Diagnostic.fromJson(item)).toList();
+        final pagination = parsed['pagination'];
+        final diagnosticsList = pagination['data'];
+
+        List<Diagnostic> diagnostics =
+            diagnosticsList.map<Diagnostic>((dynamic item) {
+          var diag = Map<String, dynamic>.from(item);
+          diag.remove('materials');
+          return Diagnostic.fromJson(diag);
+        }).toList();
+
+        return {
+          'diagnostics': diagnostics,
+          'pagination': pagination,
+        };
       } else {
         throw Exception('Failed to load diagnostics: ${response.reasonPhrase}');
       }

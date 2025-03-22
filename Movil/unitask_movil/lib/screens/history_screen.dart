@@ -13,7 +13,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  late Future<List<Diagnostic>> futureDiagnostics;
+  late Future<Map<String, dynamic>> futureDiagnostics;
   String selectedStatus = 'Enviado';
 
   final Map<String, String> _statusOptions = {
@@ -29,9 +29,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _loadDiagnostics();
   }
 
-  void _loadDiagnostics() {
+  void _loadDiagnostics({int page = 1}) {
     setState(() {
-      futureDiagnostics = ApiService().fetchDiagnosticsByStatus(_statusOptions[selectedStatus]!);
+      futureDiagnostics = ApiService()
+          .fetchDiagnosticsByStatus(_statusOptions[selectedStatus]!, page: page)
+          .then((data) {
+        return data;
+      });
     });
   }
 
@@ -39,7 +43,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Historial de Diagnósticos', style: TextStyle(color: Colors.white)),
+        title: const Text('Historial de Diagnósticos',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primaryColor,
       ),
       body: Column(
@@ -54,7 +59,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: AppColors.primaryColor, width: 2),
+                      border:
+                          Border.all(color: AppColors.primaryColor, width: 2),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
@@ -65,7 +71,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             _loadDiagnostics();
                           });
                         },
-                        items: _statusOptions.keys.map<DropdownMenuItem<String>>((String value) {
+                        items: _statusOptions.keys
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(
@@ -98,28 +105,39 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           Expanded(
             child: RefreshIndicator(
-              onRefresh: () async { _loadDiagnostics(); },
-              child: FutureBuilder<List<Diagnostic>>(
+              onRefresh: () async {
+                _loadDiagnostics();
+              },
+              child: FutureBuilder<Map<String, dynamic>>(
                 future: futureDiagnostics,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red, fontSize: 16)));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No diagnostics found', style: TextStyle(fontSize: 18, color: Colors.grey)));
+                    return Center(
+                        child: Text('Error: ${snapshot.error}',
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 16)));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!['diagnostics'].isEmpty) {
+                    return const Center(
+                        child: Text('No diagnostics found',
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.grey)));
                   } else {
+                    final diagnostics = snapshot.data!['diagnostics'];
                     return GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                         childAspectRatio: 0.85,
                       ),
-                      itemCount: snapshot.data!.length,
+                      itemCount: diagnostics.length,
                       itemBuilder: (context, index) {
-                        final diagnostic = snapshot.data![index];
+                        final diagnostic = diagnostics[index];
                         return DiagnosticCard(diagnostic: diagnostic);
                       },
                     );

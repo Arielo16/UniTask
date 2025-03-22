@@ -52,16 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _loadDiagnostics() {
+  void _loadDiagnostics({int page = 1}) {
     setState(() {
-      futureDiagnostics = ApiService().fetchDiagnosticsByStatus(selectedStatus);
+      futureDiagnostics = ApiService()
+          .fetchDiagnosticsByStatus(selectedStatus, page: page)
+          .then((data) {
+        return data['diagnostics'];
+      });
     });
   }
 
-  void _loadHistoryDiagnostics() {
+  void _loadHistoryDiagnostics({int page = 1}) {
     setState(() {
-      futureHistoryDiagnostics =
-          ApiService().fetchDiagnosticsByStatus(selectedStatus);
+      futureHistoryDiagnostics = ApiService()
+          .fetchDiagnosticsByStatus(selectedStatus, page: page)
+          .then((data) {
+        return data['diagnostics'];
+      });
     });
   }
 
