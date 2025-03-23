@@ -8,6 +8,8 @@ import '../theme/colors.dart';
 import '../models/report_by_folio.dart';
 import '../widgets/report_card.dart'; // Agregado para definir ReportCard
 import '../screens/report_detail_screen.dart'; // Agregado para definir ReportDetailScreen
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,9 +48,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _loadReportsByPriority() {
+  void _loadReportsByPriority({int page = 1}) {
     setState(() {
-      futureReports = ApiService().fetchReportsByPriority(selectedPriority);
+      futureReports = ApiService()
+          .fetchReportsByPriority(selectedPriority, page: page)
+          .then((data) {
+        _currentPage = data['pagination']['current_page'];
+        _totalPages = data['pagination']['last_page'];
+        return data['reports'];
+      });
     });
   }
 

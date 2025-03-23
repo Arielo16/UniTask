@@ -61,9 +61,10 @@ class ApiService {
     }
   }
 
-  Future<List<Report>> fetchReportsByPriority(String priority) async {
+  Future<Map<String, dynamic>> fetchReportsByPriority(String priority,
+      {int page = 1}) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/reports/priority/$priority'),
+      Uri.parse('$baseUrl/reports/priority/$priority?page=$page'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -71,15 +72,10 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final parsed = json.decode(response.body);
-      List<dynamic> reportList;
-      if (parsed is Map && parsed.containsKey('reports')) {
-        reportList = parsed['reports'];
-      } else if (parsed is List) {
-        reportList = parsed;
-      } else {
-        throw Exception('Formato de respuesta inesperado');
-      }
-      List<Report> reports = reportList.map((dynamic item) {
+      final pagination = parsed['pagination'];
+      final reportList = pagination['data'];
+
+      List<Report> reports = reportList.map<Report>((dynamic item) {
         var report = Report.fromJson(item);
         report.buildingName = item['buildingID'] ?? '';
         report.roomName = item['roomID'] ?? '';
@@ -89,7 +85,11 @@ class ApiService {
         report.statusName = item['status'] ?? '';
         return report;
       }).toList();
-      return reports;
+
+      return {
+        'reports': reports,
+        'pagination': pagination,
+      };
     } else {
       throw Exception(
           'Failed to load reports by priority: ${response.reasonPhrase}');
@@ -132,7 +132,8 @@ class ApiService {
 
   Future<Report> fetchReportByFolio(String folio) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/reports/folio/$folio'),
+      Uri.parse(
+          'https://apiunitask-production.up.railway.app/api/reports/folio/$folio'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
