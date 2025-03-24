@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _selectedIndex = 0;
   String selectedStatus = 'En Proceso';
-  String selectedPriority = 'Immediate';
+  String selectedPriority = 'Todos'; // Cambiado a 'Todos' por defecto
   List<Report> searchedReports = [];
   int _currentPage = 1;
   int _totalPages = 1;
@@ -50,13 +50,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadReportsByPriority({int page = 1}) {
     setState(() {
-      futureReports = ApiService()
-          .fetchReportsByPriority(selectedPriority, page: page)
-          .then((data) {
-        _currentPage = data['pagination']['current_page'];
-        _totalPages = data['pagination']['last_page'];
-        return data['reports'];
-      });
+      _searchController.clear(); // Limpiar el campo de búsqueda
+      searchedReports = []; // Limpiar los resultados de búsqueda
+      if (selectedPriority == 'Todos') {
+        _loadReports(page: page);
+      } else {
+        futureReports = ApiService()
+            .fetchReportsByPriority(selectedPriority, page: page)
+            .then((data) {
+          _currentPage = data['pagination']['current_page'];
+          _totalPages = data['pagination']['last_page'];
+          return data['reports'];
+        });
+      }
     });
   }
 
@@ -81,26 +87,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _searchReport() async {
-  final folio = _searchController.text.trim();
+    final folio = _searchController.text.trim();
 
-  if (folio.isNotEmpty) {
-    try {
-      Report report = await ApiService().fetchReportByFolio(folio);
-      setState(() {
-        searchedReports = [report];  // Guardamos el reporte encontrado
-      });
-    } catch (e) {
-      setState(() {
-        searchedReports = [];  // Limpia los resultados si ocurre un error
-      });
-      // Mostrar mensaje de error si no se encuentra el reporte
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error al obtener el reporte: $e'),
-      ));
+    if (folio.isNotEmpty) {
+      try {
+        Report report = await ApiService().fetchReportByFolio(folio);
+        setState(() {
+          searchedReports = [report]; // Guardamos el reporte encontrado
+        });
+      } catch (e) {
+        setState(() {
+          searchedReports = []; // Limpia los resultados si ocurre un error
+        });
+        // Mostrar mensaje de error si no se encuentra el reporte
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error al obtener el reporte: $e'),
+        ));
+      }
     }
   }
-}
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -237,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     _loadReportsByPriority();
                   });
                 },
-                items: <String>['Immediate', 'Normal']
+                items: <String>['Todos', 'Immediate', 'Normal']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
