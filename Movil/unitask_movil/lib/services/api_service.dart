@@ -130,34 +130,43 @@ class ApiService {
     }
   }
 
-  Future<Report> fetchReportByFolio(String folio) async {
-    final response = await http.get(
-      Uri.parse(
-          'https://apiunitask-production.up.railway.app/api/reports/folio/$folio'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
+Future<Report> fetchReportByFolio(String folio) async {
+  final response = await http.get(
+    Uri.parse(
+        'https://apiunitask-production.up.railway.app/api/reports/folio/$folio'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+  );
 
-    if (response.statusCode == 200) {
-      // Extrae el objeto 'report' de la respuesta
-      final Map<String, dynamic> outer = jsonDecode(response.body);
-      final Map<String, dynamic> data = outer['report'];
-      var report = Report.fromJson(data);
-      // Asigna los nombres usando las nuevas claves
-      report.buildingName = data['buildingID'] ?? '';
-      report.roomName = data['roomID'] ?? '';
-      report.categoryName = data['categoryID'] ?? '';
-      report.goodName = data['goodID'] ?? '';
-      report.userName = data['id'] ?? '';
-      report.statusName = data['status'] ?? '';
-      return report;
-    } else if (response.statusCode == 404) {
-      throw Exception('Folio no encontrado');
-    } else {
-      throw Exception('Failed to load report: ${response.reasonPhrase}');
+  if (response.statusCode == 200) {
+    // Extrae el objeto 'report' de la respuesta
+    final Map<String, dynamic> outer = jsonDecode(response.body);
+    final Map<String, dynamic> data = outer['report'];
+
+    // Asegúrate de que 'data' contiene lo esperado
+    if (data == null) {
+      throw Exception('Datos inválidos en la respuesta');
     }
+
+    var report = Report.fromJson(data);
+
+    // Asigna los nombres usando las nuevas claves, revisa que las claves existan en 'data'
+    report.buildingName = data['buildingID']?.toString() ?? 'Desconocido';
+    report.roomName = data['roomID']?.toString() ?? 'Desconocido';
+    report.categoryName = data['categoryID']?.toString() ?? 'Desconocido';
+    report.goodName = data['goodID']?.toString() ?? 'Desconocido';
+    report.userName = data['id']?.toString() ?? 'Desconocido';
+    report.statusName = data['status']?.toString() ?? 'Desconocido';
+
+    return report;
+  } else if (response.statusCode == 404) {
+    throw Exception('Folio no encontrado');
+  } else {
+    throw Exception('Error al cargar el reporte: ${response.reasonPhrase}');
   }
+}
+
 
   Future<int> postDiagnostic({
     required int reportID,

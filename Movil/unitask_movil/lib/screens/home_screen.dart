@@ -81,21 +81,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _searchReport() async {
+  final folio = _searchController.text.trim();
+
+  if (folio.isNotEmpty) {
     try {
-      final report =
-          await ApiService().fetchReportByFolio(_searchController.text);
+      Report report = await ApiService().fetchReportByFolio(folio);
       setState(() {
-        searchedReports = [report];
+        searchedReports = [report];  // Guardamos el reporte encontrado
       });
     } catch (e) {
       setState(() {
-        searchedReports = [];
+        searchedReports = [];  // Limpia los resultados si ocurre un error
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No encontrado')),
-      );
+      // Mostrar mensaje de error si no se encuentra el reporte
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error al obtener el reporte: $e'),
+      ));
     }
   }
+}
+
 
   void _onItemTapped(int index) {
     setState(() {
